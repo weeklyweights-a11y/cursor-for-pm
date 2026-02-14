@@ -1,0 +1,9 @@
+Quotes from customer feedback (same theme):
+
+{quotes_block}
+
+Output a single JSON object with exactly these fields:
+- "name" (string): A short theme title, 2–5 words.
+- "description" (string): 2–3 sentences summarizing what this theme is about.
+
+Example: {"name": "Search performance issues", "description": "Customers report slow search and timeouts. This theme groups feedback about search speed and reliability."}

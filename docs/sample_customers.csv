@@ -1,0 +1,16 @@
+domain,company_name,segment,renewal_quarter,contract_value,notes
+acme.com,Acme Corp,SMB,Q2 2025,12000,Churned last year; won back. Watch NPS.
+acme-corp.com,Acme Corporation,Mid-Market,Q1 2025,85000,Enterprise expansion in discussion.
+contoso.io,Contoso Ltd,Enterprise,Q3 2025,220000,Key reference account. SSO requested.
+fabrikam.com,Fabrikam Inc,Mid-Market,Q2 2025,45000,Renewal at risk; support tickets up.
+northwind.com,Northwind Traders,SMB,Q4 2024,8000,Renewed. Wants PDF export improvements.
+adventure-works.com,Adventure Works,Enterprise,Q1 2025,180000,Multi-year. API usage high.
+tailspin.com,Tailspin Toys,SMB,Q2 2025,15000,Onboarding in progress.
+litware.org,Litware Inc,Mid-Market,Q3 2025,52000,Slack integration critical for renewal.
+wideworld.com,Wide World Importers,Enterprise,Q4 2025,310000,Strategic. Dedicated CSM.
+graphicdesign.co,Graphic Design Studio,SMB,Q1 2025,6000,Small team; very active in community.
+cloudnine.io,Cloud Nine Solutions,Mid-Market,Q2 2025,67000,Renewal safe. Asked for dark mode.
+datatech.com,DataTech Systems,Enterprise,Q3 2025,195000,Security review pending.
+startup-lab.io,Startup Lab,SMB,Q4 2024,4000,Just renewed. Growth segment.
+global-logistics.com,Global Logistics Co,Mid-Market,Q1 2025,73000,Needs mobile app improvements.
+innovate.dev,Innovate Dev,Enterprise,Q2 2025,140000,New logo. Expansion in Q3.

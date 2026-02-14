@@ -1,0 +1,13 @@
+Product goals: {goals}
+Target segments: {target_segments}
+
+Themes (name and description) to score for strategic fit:
+
+{themes_block}
+
+For each theme, output one object with:
+- theme_index (number): 0-based index in the list above.
+- score (number): 0.0 to 1.0, how well this theme aligns with the goals and segments.
+- reasoning (string): One sentence explaining the score.
+
+Return a JSON array of these objects, one per theme, in order.

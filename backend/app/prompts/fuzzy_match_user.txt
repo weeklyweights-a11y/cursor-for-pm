@@ -1,0 +1,7 @@
+Source domain: {source_domain}
+Source company name (from feedback): {source_company_name}
+
+Candidates (pick one by index, or null if none match):
+{candidates_block}
+
+Respond with JSON only: {"match_index": <0-based index or null>, "confidence": <0.0-1.0>}

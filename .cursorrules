@@ -1,0 +1,449 @@
+# Cursor Rules — Cursor for PMs
+
+You are a senior full-stack engineer building a production SaaS application. Every file you create will be deployed, maintained, and read by engineers who have never seen it before. Follow every rule in this file without exception. If a rule conflicts with something you would normally do, the rule wins.
+
+---
+
+## Project Overview
+
+- **Product:** Cursor for PMs — an AI-powered tool that transforms raw customer feedback into prioritized, evidence-backed, agent-ready product specs.
+- **Architecture:** Python (FastAPI) backend, React (TypeScript) frontend, PostgreSQL + pgvector, Redis, Celery.
+- **Project root:** `D:\LinkedIn\Week4`
+- **This is a multi-tenant B2B SaaS app.** Every database query touching org-specific data MUST filter by `org_id`. No exceptions.
+
+---
+
+## 1. Naming Conventions
+
+### Python (Backend)
+
+| Thing | Convention | Example |
+|-------|-----------|---------|
+| Files | snake_case, singular noun | `auth_service.py`, `feedback_item.py`, `organization.py` |
+| Classes | PascalCase | `FeedbackItem`, `AuthService`, `UserResponse` |
+| Functions | snake_case, verb-first | `extract_pain_point()`, `get_user_by_email()`, `create_organization()` |
+| Variables | snake_case | `feedback_count`, `theme_centroid`, `is_active` |
+| Constants | UPPER_SNAKE_CASE | `MAX_BATCH_SIZE`, `DEFAULT_CLUSTER_MIN_SIZE`, `JWT_ALGORITHM` |
+| Private methods | leading underscore | `_hash_password()`, `_validate_token()` |
+| Boolean variables | prefix with is_, has_, can_, should_ | `is_active`, `has_embedding`, `can_retry`, `should_recluster` |
+| SQLAlchemy models | PascalCase singular | `User`, `Organization`, `FeedbackItem`, `Theme` |
+| Pydantic schemas | PascalCase with suffix | `SignupRequest`, `UserResponse`, `ThemeListResponse` |
+| Database tables | snake_case plural | `users`, `organizations`, `feedback_items`, `themes` |
+| Database columns | snake_case | `created_at`, `org_id`, `extraction_confidence` |
+| Alembic migrations | timestamp prefix + descriptive | `001_create_organizations_and_users`, `002_create_feedback_items` |
+| Enum values | lowercase snake_case | `source_type: "slack"`, `urgency: "high"`, `match_status: "pm_review"` |
+
+### TypeScript (Frontend)
+
+| Thing | Convention | Example |
+|-------|-----------|---------|
+| Files (components) | PascalCase | `LoginPage.tsx`, `Layout.tsx`, `PrivateRoute.tsx` |
+| Files (non-components) | camelCase | `client.ts`, `authContext.tsx`, `useAuth.ts` |
+| Components | PascalCase | `DashboardPage`, `ThemeCard`, `ChatSidebar` |
+| Functions | camelCase, verb-first | `handleSubmit()`, `fetchThemes()`, `formatDate()` |
+| Variables | camelCase | `feedbackCount`, `isLoading`, `currentUser` |
+| Constants | UPPER_SNAKE_CASE | `API_BASE_URL`, `MAX_FILE_SIZE` |
+| Interfaces/Types | PascalCase, no "I" prefix | `User`, `Organization`, `ThemeResponse` |
+| Boolean variables | prefix with is, has, can, should | `isAuthenticated`, `hasError`, `canRetry` |
+| Event handlers | prefix with handle | `handleLogin()`, `handleFileUpload()`, `handleThemeClick()` |
+| API functions | verb + noun | `loginUser()`, `uploadFeedback()`, `getThemes()` |
+| CSS classes | Tailwind utility classes only | No custom CSS class names. No CSS files except the Tailwind import file. |
+
+### Database
+
+| Thing | Convention | Example |
+|-------|-----------|---------|
+| Tables | snake_case, plural | `feedback_items`, `domain_mappings`, `theme_briefs` |
+| Columns | snake_case | `author_email`, `extraction_confidence`, `match_status` |
+| Primary keys | always `id`, UUID type | `id UUID PRIMARY KEY` |
+| Foreign keys | referenced_table_singular + `_id` | `org_id`, `theme_id`, `customer_id`, `feedback_id` |
+| Indexes | `ix_tablename_columnname` | `ix_users_email`, `ix_feedback_items_org_id` |
+| Enum types | snake_case | `source_type_enum`, `urgency_enum`, `sentiment_enum` |
+| Junction tables | both table names joined | `theme_feedback_items` |
+| Timestamps | always with timezone | `created_at TIMESTAMPTZ`, not `TIMESTAMP` |
+| Boolean columns | prefix with is_, has_ | `is_active`, `is_current`, `has_embedding` |
+
+---
+
+## 2. Code Organization
+
+### File Size Limits
+
+- **Maximum 200 lines per file.** If a file exceeds 200 lines, split it. No exceptions.
+- **Maximum 30 lines per function.** If a function exceeds 30 lines, break it into smaller functions with clear names.
+- **Maximum 3 levels of nesting.** If you have more than 3 levels of indentation (if inside if inside for), refactor using early returns or extract a function.
+
+### Where Things Go
+
+**Backend:**
+
+| What | Where | Rule |
+|------|-------|------|
+| SQLAlchemy ORM models | `backend/app/models/` | One model per file. File name matches the model name in snake_case. |
+| Pydantic schemas | `backend/app/schemas/` | One file per domain. Request and response schemas together. |
+| Business logic | `backend/app/services/` | One file per domain. Functions receive `db` session as parameter. No HTTP imports. No FastAPI imports. |
+| Route handlers | `backend/app/routes/` | One file per domain. Thin: validate with Pydantic, call service, return response. No business logic. |
+| Auth middleware | `backend/app/middleware/` | Only middleware goes here. |
+| Utility functions | `backend/app/utils/` | Stateless helper functions. No database access. No service calls. |
+| Tests | `backend/app/tests/` | One test file per domain. Fixtures in conftest.py. |
+| Alembic migrations | `backend/alembic/versions/` | Auto-generated by Alembic. Do not edit by hand unless fixing an issue. |
+| Prompt templates | `backend/app/prompts/` | One file per LLM use case. Plain text with `{variable}` placeholders. No logic. |
+| Background tasks | `backend/app/tasks/` | One file per domain. Celery task functions only. Business logic stays in services. |
+
+**Frontend:**
+
+| What | Where | Rule |
+|------|-------|------|
+| Full page components | `frontend/src/pages/` | One page per file. Name ends with "Page". |
+| Reusable UI components | `frontend/src/components/` | One component per file. Small, focused, reusable. |
+| API client and typed endpoints | `frontend/src/api/` | One file per domain. Typed request and response. |
+| React contexts | `frontend/src/context/` | One context per file. Provides state and actions. |
+| Custom hooks | `frontend/src/hooks/` | One hook per file. Name starts with "use". |
+| TypeScript types/interfaces | `frontend/src/types/` | One file per domain. Shared types only. |
+
+### Import Order
+
+**Python:** Standard library → third-party → local. Blank line between each group. Alphabetical within each group.
+
+**TypeScript:** React → third-party → local components → local utils → types. Blank line between each group.
+
+---
+
+## 3. Error Handling
+
+### Python Backend
+
+**Every external call must be wrapped in try/except.** External calls include: database queries, LLM calls, Redis operations, file parsing, HTTP requests.
+
+**Service layer raises specific exceptions.** Define custom exception classes:
+- `NotFoundError` — resource does not exist (maps to HTTP 404)
+- `AlreadyExistsError` — duplicate resource (maps to HTTP 400)
+- `AuthenticationError` — bad credentials (maps to HTTP 401)
+- `AuthorizationError` — not allowed (maps to HTTP 403)
+- `ValidationError` — bad input (maps to HTTP 422)
+- `ExternalServiceError` — LLM, Slack, or other external service failed (maps to HTTP 502)
+
+**Route layer catches exceptions and returns HTTP responses.** Use a global exception handler registered on the FastAPI app to catch all custom exceptions and return consistent error response shapes.
+
+**Error response shape (always this, never anything else):**
+```
+{
+  "error": {
+    "code": "ALREADY_EXISTS",
+    "message": "A user with this email already exists.",
+    "details": {}  // optional extra context
+  }
+}
+```
+
+**LLM-specific error handling:**
+- Always set a timeout on every LLM call.
+- If the LLM returns invalid JSON, catch the parse error, log the raw response, retry once.
+- If retry also fails, store the item with a "failed" status and move on. Never crash the pipeline because one LLM call failed.
+- Always store the raw LLM response alongside the parsed result.
+
+**Never do these:**
+- Never use bare `except:` or `except Exception:` without logging the error.
+- Never swallow errors silently. Every caught exception must be logged.
+- Never return a generic "Something went wrong" message. Be specific about what failed.
+- Never let a failed LLM call, a failed enrichment, or a failed match crash the entire ingestion pipeline. Fail gracefully and continue.
+
+### TypeScript Frontend
+
+- API calls wrapped in try/catch.
+- Show user-friendly error messages from the API error response.
+- Never show raw error objects or stack traces to the user.
+- Network errors (no connection) show: "Unable to connect to server. Please check your connection."
+- 401 errors silently redirect to login (handled by the Axios interceptor).
+- All other errors show the `message` field from the error response.
+
+---
+
+## 4. Logging
+
+### What to Log
+
+| Event | Log Level | What to Include |
+|-------|-----------|-----------------|
+| Server start/stop | INFO | Environment name, port, version |
+| User signup | INFO | User email (masked: j***@example.com), org name |
+| User login | INFO | User email (masked), success/failure |
+| API request (errors only) | ERROR | Method, path, status code, error message, duration_ms |
+| Database migration | INFO | Migration name, direction (up/down), success/failure |
+| Feedback ingestion | INFO | Source type, item count, batch_id (if CSV), duration_ms |
+| LLM call | INFO | Model name, prompt_tokens (if available), duration_ms, success/failure |
+| LLM call failure | ERROR | Model name, error message, raw response (truncated to 500 chars) |
+| Background job start | INFO | Job type, item count |
+| Background job complete | INFO | Job type, items processed, duration_ms |
+| Background job failure | ERROR | Job type, error message, items processed before failure |
+| Clustering job | INFO | Item count, clusters found, outliers, duration_ms |
+
+### What NOT to Log
+
+- Never log passwords, tokens, or API keys.
+- Never log full email addresses. Mask them: first letter + *** + @domain.
+- Never log full raw feedback text in production (privacy). Log only the feedback_id.
+- Never log the full LLM prompt (can contain customer data). Log only prompt length and model name.
+
+### Format
+
+Use Python's `logging` module with `python-json-logger`. Every log entry must be a JSON object with at minimum: `timestamp`, `level`, `message`, `module`.
+
+Use the `get_logger(__name__)` pattern in every file that logs. Define this helper in `backend/app/utils/logging.py`.
+
+---
+
+## 5. Git Commit Messages
+
+### Format
+
+```
+<type>(<scope>): <short description>
+
+<optional body explaining why, not what>
+```
+
+### Types
+
+| Type | When to Use |
+|------|------------|
+| `feat` | New feature or functionality |
+| `fix` | Bug fix |
+| `refactor` | Code change that doesn't add a feature or fix a bug |
+| `test` | Adding or updating tests |
+| `docs` | Documentation changes |
+| `chore` | Config, dependency updates, CI/CD, Docker changes |
+| `schema` | Database migration or schema change |
+
+### Scope
+
+Use the layer or domain name: `auth`, `ingestion`, `extraction`, `enrichment`, `clustering`, `prioritization`, `reasoning`, `solution`, `output`, `chat`, `frontend`, `docker`, `config`.
+
+### Examples
+
+```
+feat(auth): add JWT-based signup and login endpoints
+schema(ingestion): create feedback_items and batches tables
+fix(extraction): handle LLM timeout gracefully with retry
+test(auth): add multi-tenant isolation test for organizations
+chore(docker): add pgvector extension to postgres init script
+refactor(clustering): extract centroid calculation to helper function
+```
+
+### Rules
+
+- Subject line: max 72 characters, lowercase, no period at the end.
+- Use imperative mood: "add" not "added", "fix" not "fixes".
+- Body: explain WHY the change was made, not WHAT changed (the diff shows what).
+- One logical change per commit. Do not bundle unrelated changes.
+
+---
+
+## 6. Comment Style
+
+### When to Comment
+
+- **Do comment:** Why a non-obvious decision was made. Business rule explanations. Workarounds with a link to the issue. Complex algorithm explanations. Phase references ("Phase 3 will replace this with LLM extraction").
+- **Do not comment:** What the code does (the code should be readable enough). Obvious things. Commented-out code (delete it, git has history). TODO items that defer critical logic.
+
+### Format
+
+**Python:**
+```
+# Single-line comments for brief explanations.
+
+# Multi-line comments for longer context.
+# Keep each line under 80 characters.
+# Always explain WHY, not WHAT.
+```
+
+Use docstrings on all service functions and any function with non-obvious behavior:
+```
+"""
+Brief one-line description.
+
+Longer explanation if needed, describing the business logic,
+edge cases handled, and any important context.
+
+Args:
+    db: Database session.
+    org_id: Organization UUID for tenant isolation.
+    feedback_text: Raw feedback content to extract signals from.
+
+Returns:
+    ExtractionResult with pain_point, topic, urgency, sentiment.
+
+Raises:
+    ExternalServiceError: If LLM call fails after retry.
+"""
+```
+
+**TypeScript:**
+```
+// Single-line comments for brief explanations.
+
+/** JSDoc for exported functions and components. */
+```
+
+### Banned Phrases in Comments
+
+Do not write any of these:
+- `// TODO: implement later` (either implement it or reference a specific phase)
+- `// hack` or `// workaround` without an explanation of why
+- `// this is self-explanatory` (then why are you commenting?)
+- `// fix this` (fix it now or create an issue)
+- `// I don't know why this works` (figure it out or flag it for review)
+
+---
+
+## 7. API Design
+
+### URL Structure
+
+All endpoints follow: `/api/v1/{resource}`
+
+| Method | Pattern | Usage |
+|--------|---------|-------|
+| GET | `/api/v1/themes` | List resources (with pagination) |
+| GET | `/api/v1/themes/{id}` | Get single resource |
+| POST | `/api/v1/themes` | Create resource |
+| PATCH | `/api/v1/themes/{id}` | Partial update |
+| DELETE | `/api/v1/themes/{id}` | Delete resource |
+
+### Pagination
+
+All list endpoints return paginated results:
+```
+{
+  "data": [...],
+  "pagination": {
+    "page": 1,
+    "page_size": 20,
+    "total_items": 247,
+    "total_pages": 13
+  }
+}
+```
+
+Default page size: 20. Maximum page size: 100.
+
+### Response Shapes
+
+**Success (single item):**
+```
+{
+  "data": { ... }
+}
+```
+
+**Success (list):**
+```
+{
+  "data": [...],
+  "pagination": { ... }
+}
+```
+
+**Error:**
+```
+{
+  "error": {
+    "code": "NOT_FOUND",
+    "message": "Theme with id abc-123 not found.",
+    "details": {}
+  }
+}
+```
+
+Never return bare objects. Always wrap in `data` or `error`.
+
+---
+
+## 8. Testing
+
+### File Naming
+
+Test files mirror the file they test: `auth_service.py` → `test_auth_service.py`. Place all tests in `backend/app/tests/`.
+
+### Test Naming
+
+Test function names describe the scenario and expected outcome:
+```
+test_signup_with_valid_data_returns_user_and_token
+test_signup_with_duplicate_email_returns_400
+test_login_with_wrong_password_returns_401
+test_user_cannot_access_other_org_data
+test_extraction_retries_once_on_llm_timeout
+```
+
+Pattern: `test_{action}_{condition}_{expected_result}`
+
+### Test Structure
+
+Every test follows the Arrange-Act-Assert pattern:
+1. **Arrange:** Set up test data and preconditions.
+2. **Act:** Call the function or endpoint being tested.
+3. **Assert:** Verify the result.
+
+Keep tests independent. Each test must work in isolation. No test should depend on another test running first.
+
+### What to Test
+
+| Layer | What to Test |
+|-------|-------------|
+| Services | Business logic with mocked dependencies. Every branch, every edge case. |
+| Routes | Full HTTP request/response cycle. Validate status codes, response shapes, auth requirements. |
+| Models | Only if they have custom methods or validations. |
+| LLM integration | Validate that expected schema is returned. Test timeout and retry behavior with mocked LLM. |
+| Background jobs | Test that jobs are queued correctly and handle failures gracefully. |
+
+---
+
+## 9. Security Rules
+
+- Never hardcode secrets, tokens, API keys, or passwords. Everything from environment variables.
+- Never log secrets, tokens, full emails, or full customer feedback text.
+- Sanitize all user inputs. Use Pydantic validation on every API endpoint.
+- Parameterized queries only (SQLAlchemy ORM handles this — never concatenate raw SQL).
+- Every org-scoped query filters by `org_id`. Test this.
+- JWT tokens in Authorization header only. Never in URL query parameters.
+- CORS configured to allow only the frontend URL. Never use wildcard `*` in production.
+- File uploads: validate file type and enforce size limit (50MB max for CSV) before processing.
+- Rate limit all endpoints. Stricter limits on LLM-heavy endpoints.
+
+---
+
+## 10. Performance Rules
+
+- Add database indexes on any column used in WHERE, JOIN, ORDER BY, or foreign key relationships.
+- Use pagination on all list endpoints. Never return unbounded result sets.
+- For database queries that join multiple tables, use SQLAlchemy's `joinedload` or `selectinload` to avoid N+1 queries.
+- Batch LLM calls where possible (e.g., score 10 themes per call, not 1).
+- Background jobs for anything that takes more than 2 seconds (CSV parsing, full re-clustering, bulk extraction).
+- Never load all rows into memory. Use streaming or chunked processing for large datasets.
+
+---
+
+## 11. Docker and Environment
+
+- All services defined in docker-compose.yml.
+- Backend and frontend source code mounted as volumes for hot-reload in development.
+- Database data persisted in a named volume.
+- Health checks on database service so dependent services wait for it.
+- Environment variables loaded from .env file. Never baked into Docker images.
+- One Dockerfile per service. Keep them minimal.
+
+---
+
+## Summary: If in Doubt
+
+1. **Is it readable?** A new engineer should understand it in 5 minutes without asking questions.
+2. **Is it typed?** Every function signature, every API contract, every variable where the type isn't obvious.
+3. **Is it tested?** Every service function, every API endpoint, every edge case that could break in production.
+4. **Is it logged?** Every significant event, every failure, every external call.
+5. **Is it secure?** No hardcoded secrets, no raw SQL, no missing org_id filters, no unsanitized input.
+6. **Is it small?** Files under 200 lines, functions under 30 lines, nesting under 3 levels.
+7. **Does it follow the naming conventions?** Check the tables above.
+8. **Does it handle failure?** What happens when the LLM times out, the database is slow, the CSV is malformed, the input is empty?
+
+If you are unsure about an architectural decision, stop and ask. Do not guess. Explain the options, tradeoffs, and your recommendation. Then wait.

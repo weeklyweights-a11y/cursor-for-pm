@@ -1,0 +1,201 @@
+content,author,email,timestamp
+The dashboard is slow when loading many widgets. ,Alex Kim,alex@acme.com,2025-01-26T13:00:00
+Integrate with Slack for alerts.,Quinn Davis,quinn@tailspin.com,2025-01-16T16:00:00
+Android app crashes when opening notifications.,Parker White,parker@cloudnine.io,2025-01-09T12:00:00
+Search missing last 7 days of data. Critical for Q2.,Hayden Walker,hayden@innovate.dev,2025-01-02T10:00:00
+Users drop off during onboarding.,Casey Brown,casey@adventure-works.com,2025-01-24T11:00:00
+Search missing last 7 days of data. Blocking our workflow.,Morgan Taylor,morgan@northwind.com,2025-02-14T09:00:00
+Search missing last 7 days of data.,Blake Martinez,blake@wideworld.com,2025-01-29T08:00:00
+Fix mobile app crash on notifications.,Morgan Taylor,morgan@northwind.com,2025-02-02T14:00:00
+Dark mode would reduce eye strain. Critical for Q2.,Parker White,parker@cloudnine.io,2025-01-07T11:00:00
+Users drop off during onboarding. Blocking our workflow.,Dakota Harris,dakota@datatech.com,2025-01-22T12:00:00
+Onboarding flow is too long. We lost users.,Parker White,parker@cloudnine.io,2025-01-23T14:00:00
+Export to PDF would save us hours.,Alex Kim,alex@acme.com,2025-01-30T17:00:00
+Pricing page is unclear. Which plan has SSO?,Avery Wilson,avery@litware.org,2025-02-15T18:00:00
+Search missing last 7 days of data. Blocking our workflow.,Quinn Davis,quinn@tailspin.com,2025-01-11T17:00:00
+We need dark mode for the editor.,Skyler Garcia,skyler@graphicdesign.co,2025-01-26T09:00:00
+API quota is too restrictive.,Parker White,parker@cloudnine.io,2025-02-13T11:00:00
+Slack integration would be helpful.,Sam Chen,sam@contoso.io,2025-01-18T17:00:00
+Slow dashboard when we have lots of data.,Skyler Garcia,skyler@graphicdesign.co,2025-02-03T15:00:00
+We need bulk editing capability. ,Blake Martinez,blake@wideworld.com,2025-02-07T13:00:00
+Please add dark mode option.,Jordan Lee,jordan@acme-corp.com,2025-02-06T12:00:00
+Integrate with Slack for alerts.,Cameron Lewis,cameron@global-logistics.com,2025-01-14T15:00:00
+Need faster dashboard loading.,Hayden Walker,hayden@innovate.dev,2025-02-12T11:00:00
+Please add export to PDF.,Sam Chen,sam@contoso.io,2025-01-19T13:00:00
+Love the PDF export feature.,Sam Chen,sam@contoso.io,2025-01-06T10:00:00
+We need dark mode for the editor. Critical for Q2.,Dakota Harris,dakota@datatech.com,2025-01-30T12:00:00
+Please add export to PDF.,Riley Jones,riley@fabrikam.com,2025-01-12T13:00:00
+Slack integration is critical for us. ,Cameron Lewis,cameron@global-logistics.com,2025-02-07T18:00:00
+Search cache seems broken.,Reese Clark,reese@startup-lab.io,2025-01-01T09:00:00
+We need dark mode for the editor. Blocking our workflow.,Morgan Taylor,morgan@northwind.com,2025-01-19T08:00:00
+Feature request: dark mode.,Dakota Harris,dakota@datatech.com,2025-01-22T13:00:00
+Onboarding flow is too long. We lost users.,Blake Martinez,blake@wideworld.com,2025-02-07T15:00:00
+Fix search not showing recent items.,Alex Kim,alex@acme.com,2025-02-11T16:00:00
+Integrate with Slack for alerts.,Skyler Garcia,skyler@graphicdesign.co,2025-01-07T17:00:00
+Bulk editing would save us time. We have 200+ items.,Skyler Garcia,skyler@graphicdesign.co,2025-02-06T17:00:00
+Search does not return recent results.,Quinn Davis,quinn@tailspin.com,2025-01-25T13:00:00
+Onboarding flow is too long. We lost users.,Cameron Lewis,cameron@global-logistics.com,2025-02-09T18:00:00
+Users drop off during onboarding.,Blake Martinez,blake@wideworld.com,2025-01-17T08:00:00
+Slack integration would be helpful.,Sam Chen,sam@contoso.io,2025-01-20T15:00:00
+Support for bulk editing please.,Skyler Garcia,skyler@graphicdesign.co,2025-01-08T15:00:00
+Simplify onboarding flow.,Parker White,parker@cloudnine.io,2025-02-07T14:00:00
+Pricing page is unclear. Which plan has SSO?,Sam Chen,sam@contoso.io,2025-01-11T18:00:00
+Mobile notifications are broken. ,Morgan Taylor,morgan@northwind.com,2025-01-05T18:00:00
+Feature request: dark mode.,Sam Chen,sam@contoso.io,2025-02-15T13:00:00
+Slack integration is critical for us.,Morgan Taylor,morgan@northwind.com,2025-02-05T12:00:00
+Search results are stale.,Sam Chen,sam@contoso.io,2025-01-10T08:00:00
+Please add export to PDF.,Hayden Walker,hayden@innovate.dev,2025-01-24T10:00:00
+Pricing page is unclear. Which plan has SSO? Critical for Q2.,Parker White,parker@cloudnine.io,2025-02-12T18:00:00
+Mobile app crashes on notifications.,Dakota Harris,dakota@datatech.com,2025-02-01T10:00:00
+API quota is too restrictive.,Casey Brown,casey@adventure-works.com,2025-01-02T09:00:00
+Slack notification when task is assigned. Blocking our workflow.,Dakota Harris,dakota@datatech.com,2025-01-06T09:00:00
+Increase API rate limit please.,Blake Martinez,blake@wideworld.com,2025-01-04T09:00:00
+Increase API rate limit please.,Casey Brown,casey@adventure-works.com,2025-01-24T09:00:00
+Shorten the onboarding steps.,Blake Martinez,blake@wideworld.com,2025-01-09T17:00:00
+Please add export to PDF.,Reese Clark,reese@startup-lab.io,2025-01-11T13:00:00
+SSO pricing is confusing. Critical for Q2.,Parker White,parker@cloudnine.io,2025-02-01T10:00:00
+Fix search not showing recent items. Blocking our workflow.,Reese Clark,reese@startup-lab.io,2025-02-08T13:00:00
+Dark mode would reduce eye strain.,Cameron Lewis,cameron@global-logistics.com,2025-01-03T14:00:00
+Need clarity on pricing and SSO.,Casey Brown,casey@adventure-works.com,2025-01-30T12:00:00
+Need higher API rate limits for integration.,Reese Clark,reese@startup-lab.io,2025-01-13T14:00:00
+Simplify onboarding flow. Urgent for our team.,Hayden Walker,hayden@innovate.dev,2025-02-12T16:00:00
+Slack notification when task is assigned.,Skyler Garcia,skyler@graphicdesign.co,2025-01-19T09:00:00
+Slack integration would be helpful.,Dakota Harris,dakota@datatech.com,2025-01-31T08:00:00
+Pricing and SSO documentation needed.,Quinn Davis,quinn@tailspin.com,2025-01-03T15:00:00
+Slack integration would be helpful.,Sam Chen,sam@contoso.io,2025-01-04T16:00:00
+Bulk editing would save us time. We have 200+ items.,Skyler Garcia,skyler@graphicdesign.co,2025-01-24T10:00:00
+Bulk edit feature for 200+ items.,Blake Martinez,blake@wideworld.com,2025-01-25T08:00:00
+We need bulk editing capability. Urgent for our team.,Casey Brown,casey@adventure-works.com,2025-01-13T08:00:00
+API limits are blocking our sync.,Jordan Lee,jordan@acme-corp.com,2025-01-11T11:00:00
+PDF export is critical for our team.,Riley Jones,riley@fabrikam.com,2025-01-20T09:00:00
+API rate limit is too low.,Skyler Garcia,skyler@graphicdesign.co,2025-01-07T15:00:00
+Pricing page is unclear. Which plan has SSO?,Alex Kim,alex@acme.com,2025-01-02T08:00:00
+Dashboard takes too long to load.,Riley Jones,riley@fabrikam.com,2025-01-22T14:00:00
+Feature request: dark mode.,Dakota Harris,dakota@datatech.com,2025-02-03T10:00:00
+Which plan includes SSO? Urgent for our team.,Skyler Garcia,skyler@graphicdesign.co,2025-01-14T16:00:00
+Slack notification when task is assigned. Urgent for our team.,Hayden Walker,hayden@innovate.dev,2025-01-31T18:00:00
+Bulk editing would save us time. We have 200+ items. Urgent for our team.,Casey Brown,casey@adventure-works.com,2025-01-23T09:00:00
+API limits are blocking our sync.,Jordan Lee,jordan@acme-corp.com,2025-02-09T12:00:00
+App crashes on push notification tap. ,Sam Chen,sam@contoso.io,2025-01-05T08:00:00
+Bulk editing would save us time. We have 200+ items. ,Parker White,parker@cloudnine.io,2025-01-13T17:00:00
+Onboarding is too complex.,Morgan Taylor,morgan@northwind.com,2025-01-18T09:00:00
+Search cache seems broken. ,Parker White,parker@cloudnine.io,2025-02-01T10:00:00
+Please add dark mode option. ,Jordan Lee,jordan@acme-corp.com,2025-01-19T10:00:00
+Slack notification when task is assigned.,Riley Jones,riley@fabrikam.com,2025-01-28T11:00:00
+Simplify onboarding flow. Blocking our workflow.,Morgan Taylor,morgan@northwind.com,2025-01-08T18:00:00
+Please add dark mode option.,Quinn Davis,quinn@tailspin.com,2025-01-08T18:00:00
+Dashboard takes too long to load.,Casey Brown,casey@adventure-works.com,2025-02-05T08:00:00
+Export to PDF would save us hours.,Riley Jones,riley@fabrikam.com,2025-01-22T08:00:00
+SSO pricing is confusing.,Avery Wilson,avery@litware.org,2025-01-26T10:00:00
+App crashes on push notification tap.,Cameron Lewis,cameron@global-logistics.com,2025-01-16T11:00:00
+Onboarding is too complex.,Hayden Walker,hayden@innovate.dev,2025-01-05T16:00:00
+Fix search not showing recent items. ,Parker White,parker@cloudnine.io,2025-01-04T09:00:00
+Onboarding flow is too long. We lost users.,Avery Wilson,avery@litware.org,2025-01-22T17:00:00
+Integrate with Slack for alerts. Critical for Q2.,Avery Wilson,avery@litware.org,2025-01-04T11:00:00
+Shorten the onboarding steps.,Casey Brown,casey@adventure-works.com,2025-01-26T08:00:00
+Shorten the onboarding steps.,Reese Clark,reese@startup-lab.io,2025-01-26T18:00:00
+App crashes on push notification tap. Blocking our workflow.,Reese Clark,reese@startup-lab.io,2025-01-06T09:00:00
+Android app crashes when opening notifications.,Morgan Taylor,morgan@northwind.com,2025-02-11T17:00:00
+Slack notification when task is assigned.,Dakota Harris,dakota@datatech.com,2025-01-05T09:00:00
+Export to PDF would save us hours. Blocking our workflow.,Hayden Walker,hayden@innovate.dev,2025-01-31T18:00:00
+Need higher API rate limits for integration. Critical for Q2.,Jordan Lee,jordan@acme-corp.com,2025-02-06T15:00:00
+Need bulk edit for large lists.,Cameron Lewis,cameron@global-logistics.com,2025-01-29T13:00:00
+Dashboard takes too long to load. Critical for Q2.,Cameron Lewis,cameron@global-logistics.com,2025-02-06T11:00:00
+Slow dashboard when we have lots of data.,Dakota Harris,dakota@datatech.com,2025-01-20T09:00:00
+API rate limit is too low.,Avery Wilson,avery@litware.org,2025-01-02T08:00:00
+Pricing page is unclear. Which plan has SSO? Blocking our workflow.,Cameron Lewis,cameron@global-logistics.com,2025-02-11T12:00:00
+Bulk edit feature for 200+ items.,Cameron Lewis,cameron@global-logistics.com,2025-01-09T14:00:00
+Pricing page is unclear. Which plan has SSO? Critical for Q2.,Hayden Walker,hayden@innovate.dev,2025-02-14T17:00:00
+Dashboard takes too long to load. Urgent for our team.,Parker White,parker@cloudnine.io,2025-01-12T14:00:00
+Search does not return recent results.,Blake Martinez,blake@wideworld.com,2025-01-23T11:00:00
+Dark mode for the app would be great.,Avery Wilson,avery@litware.org,2025-01-11T11:00:00
+Users drop off during onboarding. Critical for Q2.,Riley Jones,riley@fabrikam.com,2025-01-15T08:00:00
+Export to PDF would save us hours.,Riley Jones,riley@fabrikam.com,2025-01-19T15:00:00
+Slack integration is critical for us.,Jordan Lee,jordan@acme-corp.com,2025-01-06T14:00:00
+API rate limit is too low. Critical for Q2.,Alex Kim,alex@acme.com,2025-01-27T17:00:00
+Onboarding flow is too long. We lost users.,Reese Clark,reese@startup-lab.io,2025-02-05T16:00:00
+Onboarding flow is too long. We lost users.,Hayden Walker,hayden@innovate.dev,2025-02-10T10:00:00
+Dashboard performance is poor with 50+ items. Blocking our workflow.,Reese Clark,reese@startup-lab.io,2025-01-24T09:00:00
+Support for bulk editing please.,Casey Brown,casey@adventure-works.com,2025-02-13T13:00:00
+Love the PDF export feature. ,Casey Brown,casey@adventure-works.com,2025-01-22T13:00:00
+Search results are stale. Critical for Q2.,Avery Wilson,avery@litware.org,2025-02-05T13:00:00
+Mobile app crashes on notifications. Urgent for our team.,Quinn Davis,quinn@tailspin.com,2025-01-17T13:00:00
+Fix mobile app crash on notifications.,Alex Kim,alex@acme.com,2025-01-26T17:00:00
+Android app crashes when opening notifications.,Cameron Lewis,cameron@global-logistics.com,2025-01-10T13:00:00
+We need dark mode for the editor.,Casey Brown,casey@adventure-works.com,2025-01-31T15:00:00
+Pricing page is unclear. Which plan has SSO?,Dakota Harris,dakota@datatech.com,2025-01-12T15:00:00
+Slack notification when task is assigned.,Hayden Walker,hayden@innovate.dev,2025-02-03T09:00:00
+The dashboard is slow when loading many widgets. Urgent for our team.,Quinn Davis,quinn@tailspin.com,2025-02-05T14:00:00
+Fix search not showing recent items.,Jordan Lee,jordan@acme-corp.com,2025-01-05T17:00:00
+API limits are blocking our sync. Critical for Q2.,Alex Kim,alex@acme.com,2025-01-22T13:00:00
+Slow dashboard when we have lots of data. ,Cameron Lewis,cameron@global-logistics.com,2025-01-15T13:00:00
+Please add dark mode option.,Dakota Harris,dakota@datatech.com,2025-02-14T14:00:00
+Which plan includes SSO?,Alex Kim,alex@acme.com,2025-01-27T18:00:00
+Need faster dashboard loading.,Skyler Garcia,skyler@graphicdesign.co,2025-01-09T08:00:00
+Dashboard takes too long to load. ,Sam Chen,sam@contoso.io,2025-02-01T11:00:00
+Pricing page is unclear. Which plan has SSO?,Morgan Taylor,morgan@northwind.com,2025-01-07T12:00:00
+PDF export is critical for our team. Urgent for our team.,Jordan Lee,jordan@acme-corp.com,2025-01-02T12:00:00
+Need export to PDF for reports.,Skyler Garcia,skyler@graphicdesign.co,2025-02-12T14:00:00
+Which plan includes SSO?,Avery Wilson,avery@litware.org,2025-01-18T18:00:00
+PDF export is critical for our team.,Morgan Taylor,morgan@northwind.com,2025-02-14T16:00:00
+API quota is too restrictive. Blocking our workflow.,Alex Kim,alex@acme.com,2025-01-30T13:00:00
+Please add export to PDF.,Quinn Davis,quinn@tailspin.com,2025-01-01T12:00:00
+Export to PDF would save us hours.,Morgan Taylor,morgan@northwind.com,2025-01-20T15:00:00
+Feature request: dark mode.,Sam Chen,sam@contoso.io,2025-01-27T17:00:00
+Android app crashes when opening notifications.,Casey Brown,casey@adventure-works.com,2025-02-06T15:00:00
+Support for bulk editing please. Critical for Q2.,Avery Wilson,avery@litware.org,2025-01-13T15:00:00
+Love the PDF export feature.,Hayden Walker,hayden@innovate.dev,2025-02-12T10:00:00
+Onboarding is too complex. ,Hayden Walker,hayden@innovate.dev,2025-02-14T14:00:00
+Which plan includes SSO?,Riley Jones,riley@fabrikam.com,2025-01-31T08:00:00
+Pricing and SSO documentation needed. Urgent for our team.,Hayden Walker,hayden@innovate.dev,2025-01-04T11:00:00
+Shorten the onboarding steps. Urgent for our team.,Riley Jones,riley@fabrikam.com,2025-01-23T15:00:00
+Fix search not showing recent items.,Morgan Taylor,morgan@northwind.com,2025-01-12T12:00:00
+Search does not return recent results.,Riley Jones,riley@fabrikam.com,2025-01-13T09:00:00
+Mobile notifications are broken. Blocking our workflow.,Casey Brown,casey@adventure-works.com,2025-01-12T11:00:00
+Increase API rate limit please.,Hayden Walker,hayden@innovate.dev,2025-01-21T17:00:00
+Search missing last 7 days of data.,Avery Wilson,avery@litware.org,2025-02-08T17:00:00
+We need dark mode for the editor. Urgent for our team.,Morgan Taylor,morgan@northwind.com,2025-01-26T15:00:00
+Slack integration is critical for us.,Hayden Walker,hayden@innovate.dev,2025-02-12T15:00:00
+API limits are blocking our sync.,Casey Brown,casey@adventure-works.com,2025-02-07T15:00:00
+Increase API rate limit please.,Riley Jones,riley@fabrikam.com,2025-01-04T10:00:00
+Bulk edit feature for 200+ items.,Blake Martinez,blake@wideworld.com,2025-01-23T17:00:00
+Slack integration is critical for us. Blocking our workflow.,Parker White,parker@cloudnine.io,2025-01-20T15:00:00
+Search cache seems broken.,Morgan Taylor,morgan@northwind.com,2025-02-05T14:00:00
+Fix search not showing recent items.,Riley Jones,riley@fabrikam.com,2025-01-20T17:00:00
+Shorten the onboarding steps.,Hayden Walker,hayden@innovate.dev,2025-01-13T12:00:00
+Mobile notifications are broken. Urgent for our team.,Casey Brown,casey@adventure-works.com,2025-02-13T10:00:00
+Support for bulk editing please.,Quinn Davis,quinn@tailspin.com,2025-02-05T09:00:00
+Love the PDF export feature. ,Sam Chen,sam@contoso.io,2025-02-04T15:00:00
+Fix search not showing recent items. Blocking our workflow.,Casey Brown,casey@adventure-works.com,2025-01-23T18:00:00
+Export to PDF would save us hours. Critical for Q2.,Jordan Lee,jordan@acme-corp.com,2025-02-11T17:00:00
+App crashes on push notification tap. Urgent for our team.,Avery Wilson,avery@litware.org,2025-01-16T18:00:00
+Dashboard takes too long to load.,Sam Chen,sam@contoso.io,2025-01-17T11:00:00
+API limits are blocking our sync.,Dakota Harris,dakota@datatech.com,2025-01-15T08:00:00
+We need dark mode for the editor. Blocking our workflow.,Casey Brown,casey@adventure-works.com,2025-02-04T16:00:00
+Search does not return recent results. Blocking our workflow.,Skyler Garcia,skyler@graphicdesign.co,2025-01-19T16:00:00
+Search results are stale. Urgent for our team.,Alex Kim,alex@acme.com,2025-01-26T17:00:00
+Search cache seems broken.,Avery Wilson,avery@litware.org,2025-01-26T17:00:00
+Pricing and SSO documentation needed.,Riley Jones,riley@fabrikam.com,2025-01-12T14:00:00
+PDF export is critical for our team. ,Morgan Taylor,morgan@northwind.com,2025-01-11T16:00:00
+Please add export to PDF. ,Casey Brown,casey@adventure-works.com,2025-01-23T13:00:00
+PDF export is critical for our team.,Parker White,parker@cloudnine.io,2025-02-02T10:00:00
+Feature request: dark mode.,Blake Martinez,blake@wideworld.com,2025-01-21T10:00:00
+API limits are blocking our sync.,Quinn Davis,quinn@tailspin.com,2025-02-05T13:00:00
+Pricing and SSO documentation needed.,Alex Kim,alex@acme.com,2025-02-05T15:00:00
+Search results are stale.,Quinn Davis,quinn@tailspin.com,2025-01-19T11:00:00
+Feature request: dark mode.,Avery Wilson,avery@litware.org,2025-01-11T18:00:00
+Onboarding is too complex.,Cameron Lewis,cameron@global-logistics.com,2025-02-13T09:00:00
+API quota is too restrictive. Urgent for our team.,Jordan Lee,jordan@acme-corp.com,2025-01-11T09:00:00
+Simplify onboarding flow.,Cameron Lewis,cameron@global-logistics.com,2025-01-21T11:00:00
+Love the PDF export feature. Urgent for our team.,Skyler Garcia,skyler@graphicdesign.co,2025-01-12T18:00:00
+Mobile app crashes on notifications.,Avery Wilson,avery@litware.org,2025-02-04T16:00:00
+Slack notification when task is assigned.,Casey Brown,casey@adventure-works.com,2025-01-04T10:00:00
+Slack integration is critical for us.,Hayden Walker,hayden@innovate.dev,2025-01-19T10:00:00
+Android app crashes when opening notifications.,Skyler Garcia,skyler@graphicdesign.co,2025-02-09T08:00:00
+Search cache seems broken.,Avery Wilson,avery@litware.org,2025-01-18T17:00:00
+Which plan includes SSO?,Jordan Lee,jordan@acme-corp.com,2025-01-03T11:00:00
+Fix search not showing recent items.,Casey Brown,casey@adventure-works.com,2025-01-24T15:00:00
+Need clarity on pricing and SSO.,Avery Wilson,avery@litware.org,2025-01-03T09:00:00
+Please add export to PDF.,Casey Brown,casey@adventure-works.com,2025-01-26T17:00:00
+Pricing and SSO documentation needed.,Sam Chen,sam@contoso.io,2025-01-20T10:00:00
+Onboarding flow is too long. We lost users.,Avery Wilson,avery@litware.org,2025-01-06T17:00:00
