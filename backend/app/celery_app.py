@@ -9,12 +9,15 @@ celery_app = Celery(
     broker=settings.celery_broker_url,
     backend=settings.celery_result_backend,
     include=[
-        "app.tasks.csv_tasks",
-        "app.tasks.slack_tasks",
-        "app.tasks.extraction_tasks",
-        "app.tasks.enrichment_tasks",
-        "app.tasks.embedding_tasks",
+        "app.tasks.brief_tasks",
+        "app.tasks.chat_tasks",
         "app.tasks.clustering_tasks",
+        "app.tasks.csv_tasks",
+        "app.tasks.embedding_tasks",
+        "app.tasks.enrichment_tasks",
+        "app.tasks.extraction_tasks",
+        "app.tasks.spec_tasks",
+        "app.tasks.slack_tasks",
     ],
 )
 celery_app.conf.update(

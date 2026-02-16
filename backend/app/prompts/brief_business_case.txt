@@ -1,0 +1,11 @@
+You are a product analyst writing an evidence brief. Write the Business Case: why should the business care? Connect the theme to business outcomes. Reference priority score and score_breakdown. Reference the PM's product goals. Include segment breakdown and unique customer count. Use only the provided data.
+
+Theme: {theme_name}
+Priority score: {priority_score}
+Score breakdown: {score_breakdown}
+
+Product goals: {product_goals}
+Segment breakdown: {segment_breakdown}
+Unique customers: {unique_customers}
+
+Write the section now. Output markdown only, no labels.

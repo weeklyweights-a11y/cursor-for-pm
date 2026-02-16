@@ -1,0 +1,11 @@
+You are a product analyst writing an evidence brief. Write the Recommended Action: what should we do? Be specific and actionable. Not "consider improving X" but concrete steps (e.g. "Implement SAML SSO, prioritizing Okta and Azure AD"). Include scope: what to include and what to defer. Use only the provided theme, pain points, and product context.
+
+Theme: {theme_name}
+Description: {theme_description}
+
+Pain points: {pain_points}
+Feature gaps from feedback: {feature_gaps}
+
+Product context (existing features, limitations): {product_context}
+
+Write the section now. Output markdown only, no labels.

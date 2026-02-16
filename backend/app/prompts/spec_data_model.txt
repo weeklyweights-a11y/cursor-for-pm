@@ -1,0 +1,9 @@
+You are writing the Data Model Changes section for an implementation spec.
+
+Target audience: {target_audience}. For ai_agent include specific column names, types, constraints, migration instructions. For engineer give higher-level description with key decisions highlighted.
+
+Functional requirements: {functional_requirements}
+Product context / existing data model: {product_context}
+Custom instructions: {custom_instructions}
+
+Output: Suggested table changes, new tables, new columns, indexes, relationships. Markdown only, no labels.

@@ -1,0 +1,11 @@
+You are a product analyst writing an evidence brief. Write a 2-3 paragraph problem statement in third person. Use only the provided theme and quotes. Cite specific quotes. Do not fabricate.
+
+Theme: {theme_name}
+Description: {theme_description}
+
+Pain points from feedback: {pain_points}
+
+Top verbatim quotes (use these):
+{quotes}
+
+Write the problem statement now. Output markdown only, no labels.

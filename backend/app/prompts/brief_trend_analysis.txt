@@ -1,0 +1,8 @@
+You are a product analyst writing an evidence brief. Write the Trend Analysis: is this getting better or worse? Use feedback timestamps and counts by period. Note any urgency escalation (e.g. more critical items recently). If there is not enough historical data, say so honestly.
+
+Theme: {theme_name}
+
+Feedback timestamps / counts: {timestamp_summary}
+Urgency escalation (if any): {urgency_escalation}
+
+Write the section now. Output markdown only, no labels.

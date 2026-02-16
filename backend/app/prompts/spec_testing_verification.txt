@@ -1,0 +1,9 @@
+You are writing the Testing & Verification section for an implementation spec.
+
+Target audience: {target_audience}. For ai_agent provide specific test descriptions. For engineer provide higher-level testing strategy.
+
+User stories with acceptance criteria: {user_stories}
+Functional requirements: {functional_requirements}
+Solution evaluation summary: {solution_evaluation_summary}
+
+Output: Verification checklist — integration tests, manual verification steps, edge cases, definition of done tied to acceptance criteria. Markdown only, no labels.

@@ -1,0 +1,40 @@
+feedback,email,name,company,date
+"We need a public roadmap so customers see what we're building.",sarah@acme.com,Sarah Chen,Acme Corp,2025-01-15
+"Export to CSV is fine but we need PDF for execs.",mike@contoso.io,Mike Ross,Contoso Ltd,2025-01-14
+"Jira integration would save us hours every week.",jane@fabrikam.com,Jane Doe,Fabrikam Inc,2025-01-13
+"The in-app widget is great; our response rate went up.",alex@northwind.com,Alex Kim,Northwind Traders,2025-01-12
+"Too many Slack notifications; need to mute by channel.",pat@adventure-works.com,Pat Smith,Adventure Works,2025-01-11
+"Search is slow when we have 500+ feedback items.",chris@tailspin.com,Chris Lee,Tailspin Toys,2025-01-10
+"Would love impact vs effort scoring for prioritization.",sam@litware.org,Sam Wilson,Litware Inc,2025-01-09
+"Need SSO; we can't onboard more teams without it.",taylor@wideworld.com,Taylor Brown,Wide World Importers,2025-01-08
+"API is read-only; we need to push feedback from our app.",jordan@graphicdesign.co,Jordan Davis,Graphic Design Studio,2025-01-07
+"A changelog or ""what we shipped"" would close the loop.",casey@cloudnine.io,Casey Moore,Cloud Nine Solutions,2025-01-06
+"Can we filter feedback by customer segment?",riley@datatech.com,Riley Clark,DataTech Systems,2025-01-05
+"Mobile app would help support on the go.",morgan@startup-lab.io,Morgan Hill,Startup Lab,2025-01-04
+"Tagging is good but we need custom fields per team.",quinn@global-logistics.com,Quinn Adams,Global Logistics Co,2025-01-03
+"Love that we can link feedback to themes.",reese@innovate.dev,Reese Jones,Innovate Dev,2025-01-02
+"Linear integration please; we use Linear not Jira.",drew@acme.com,Drew Miller,Acme Corp,2025-01-01
+"Email ingestion is flaky; sometimes duplicates.",blair@contoso.io,Blair Taylor,Contoso Ltd,2024-12-30
+"Need to show customers which requests we're working on.",cameron@fabrikam.com,Cameron White,Fabrikam Inc,2024-12-29
+"Role-based access works; need viewer-only for stakeholders.",skyler@northwind.com,Skyler Green,Northwind Traders,2024-12-28
+"Would be great to vote or +1 on existing feedback.",jamie@adventure-works.com,Jamie Fox,Adventure Works,2024-12-27
+"Bulk actions: approve, reject, merge duplicates.",avery@tailspin.com,Avery Scott,Tailspin Toys,2024-12-26
+"Sentiment is useful; add urgency as a filter.",parker@litware.org,Parker Bell,Litware Inc,2024-12-25
+"Dashboard for feedback volume by theme over time.",sydney@wideworld.com,Sydney Reed,Wide World Importers,2024-12-24
+"Support for non-English feedback would help.",rowan@graphicdesign.co,Rowan King,Graphic Design Studio,2024-12-23
+"Notification when someone from same account adds feedback.",dakota@cloudnine.io,Dakota Wright,Cloud Nine Solutions,2024-12-22
+"Export by theme or by date range.",remy@datatech.com,Remy Hayes,DataTech Systems,2024-12-21
+"Quick reply template to tell users we're on it.",finley@startup-lab.io,Finley Brooks,Startup Lab,2024-12-20
+"Merge similar feedback into one theme automatically.",emery@global-logistics.com,Emery Gray,Global Logistics Co,2024-12-19
+"API rate limits are too low for our sync job.",sage@innovate.dev,Sage Cooper,Innovate Dev,2024-12-18
+"Dark mode for the dashboard would be nice.",shannon@acme.com,Shannon Ward,Acme Corp,2024-12-17
+"Show which themes have specs or tickets linked.",dana@contoso.io,Dana Murphy,Contoso Ltd,2024-12-16
+"We need to assign feedback to PMs or teams.",jesse@fabrikam.com,Jesse Rivera,Fabrikam Inc,2024-12-15
+"Email digest instead of real-time for low-priority.",kelly@northwind.com,Kelly Ortiz,Northwind Traders,2024-12-14
+"Better duplicate detection; we see the same ask 3x.",tracy@adventure-works.com,Tracy Nguyen,Adventure Works,2024-12-13
+"Link to source (Slack thread or ticket) in the UI.",robyn@tailspin.com,Robyn Foster,Tailspin Toys,2024-12-12
+"Allow internal notes on feedback not visible to customers.",jo@litware.org,Jo Bennett,Litware Inc,2024-12-11
+"Public voting board so customers see top requests.",bryn@wideworld.com,Bryn Collins,Wide World Importers,2024-12-10
+"Webhook when new feedback matches a theme.",quinn@graphicdesign.co,Quinn Park,Graphic Design Studio,2024-12-09
+"Time-to-close metric: feedback submitted to shipped.",reese@cloudnine.io,Reese Morgan,Cloud Nine Solutions,2024-12-08
+"Integrate with Zendesk so we don't re-type feedback.",drew@datatech.com,Drew Sullivan,DataTech Systems,2024-12-07

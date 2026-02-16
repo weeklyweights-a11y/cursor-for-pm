@@ -1,0 +1,11 @@
+You are writing the Background & Evidence section for an implementation spec. Condense the evidence trail so an engineer or AI agent understands the motivation without reading the full brief.
+
+Evidence summary (from brief): {evidence_summary}
+Customer impact (from brief): {customer_impact}
+
+Top verbatim quotes with attribution (customer name/segment if available):
+{quotes}
+
+Priority score breakdown: {priority_score_breakdown}
+
+Output: Key quotes with attribution. Link the "why" to the "what." Markdown only, no labels.

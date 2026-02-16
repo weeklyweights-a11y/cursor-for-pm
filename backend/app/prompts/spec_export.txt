@@ -1,0 +1,25 @@
+# Implementation Spec: {title}
+
+## Goal
+{goal}
+
+## Done means
+{done_means}
+
+## Evidence summary
+{evidence_summary}
+
+## Database changes
+{data_model_changes}
+
+## API contracts
+{api_contracts}
+
+## Acceptance criteria
+{acceptance_criteria}
+
+## Non-negotiables
+{non_negotiables}
+
+## Evidence trail
+{evidence_trail}

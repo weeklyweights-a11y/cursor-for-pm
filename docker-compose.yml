@@ -37,8 +37,7 @@ services:
     env_file:
       - .env
     environment:
-      # Use Ollama installed on host (not the ollama container).
-      OLLAMA_BASE_URL: http://host.docker.internal:11434
+      OLLAMA_BASE_URL: http://ollama:11434
       OLLAMA_MODEL: llama3:8b
       # 200-row CSV and below process in request (sync); no worker file path.
       MAX_SYNC_CSV_ROWS: "500"
@@ -46,6 +45,8 @@ services:
       db:
         condition: service_healthy
       redis:
+        condition: service_started
+      ollama:
         condition: service_started
     volumes:
       - ./backend:/app
@@ -58,12 +59,14 @@ services:
     env_file:
       - .env
     environment:
-      OLLAMA_BASE_URL: http://host.docker.internal:11434
+      OLLAMA_BASE_URL: http://ollama:11434
       OLLAMA_MODEL: llama3:8b
     depends_on:
       db:
         condition: service_healthy
       redis:
+        condition: service_started
+      ollama:
         condition: service_started
     volumes:
       - ./backend:/app

@@ -1,78 +1,121 @@
 # Cursor for PMs
 
-An AI-powered tool that transforms raw customer feedback into prioritized, evidence-backed, agent-ready product specifications.
+**Turn customer feedback into clear product specs—without the guesswork.**
 
-## Prerequisites
+Cursor for PMs is a web app that takes messy, real-world feedback (from emails, CSVs, support tickets, or typed-in notes), figures out what customers really want, groups similar ideas into themes, and writes structured specs that you or an AI coding assistant can use to build the right thing.
 
-- Docker and Docker Compose
-- Git
-- **Python 3.10** (for local backend development and tests; this project uses only 3.10)
+---
 
-## Setup
+## What problem does it solve?
 
-1. Clone the repository and enter the project directory.
+Product managers get feedback everywhere: Slack, email, spreadsheets, support tools. Turning that into a clear “what to build and why” is slow and manual. This app:
 
-2. The project includes a `.env` file with working development values. If you need to customize, copy from `.env.example` and edit:
+- **Collects** feedback from multiple places (upload a CSV, paste text, or connect Slack later).
+- **Understands** each piece—what’s the pain, how urgent, positive or negative.
+- **Groups** similar feedback into themes so you see patterns, not just one-off comments.
+- **Prioritizes** themes using your goals (e.g. focus on enterprise, or on high-urgency items).
+- **Writes** evidence-backed briefs and specs you can hand to engineering or to an AI coding tool.
+
+Everything runs in Docker so you can try it locally without messing with your machine.
+
+---
+
+## What you need to run it
+
+- **Docker** and **Docker Compose** (so we can run the app, database, and AI model in containers).
+- **Git** (to clone the project).
+
+That’s it for a first run. Optionally you can use **Python 3.10** on your machine if you want to run tests or scripts outside Docker.
+
+---
+
+## How to run the app
+
+1. **Clone the repo** and open the project folder in a terminal.
+
+2. **Environment file**  
+   The project may include a `.env` file. If not, copy from `.env.example` and edit if needed:
    ```bash
    cp .env.example .env
    ```
 
-3. Start all services:
+3. **Start everything**
    ```bash
-   docker-compose up --build
+   docker compose up --build
+   ```
+   This starts the database, Redis, backend API, frontend, and worker. The first time it may take a few minutes to build and pull images.
+
+4. **Start Ollama (for AI extraction)**  
+   The app uses an AI model to read feedback and extract meaning. We run that model inside Docker too:
+   ```bash
+   docker compose up -d ollama
+   docker compose exec ollama ollama run llama3:8b
+   ```
+   The second command downloads the model once; you can cancel after it finishes. Then restart backend and worker so they use Ollama:
+   ```bash
+   docker compose restart backend worker
    ```
 
-4. **Phase 3 (Signal extraction):** If using Ollama for local LLM extraction, start the Ollama service and pull the model once:
+5. **Database migrations** (run once)
    ```bash
-   docker-compose up -d ollama
-   docker-compose exec ollama ollama pull llama3.2:3b
+   docker compose exec backend alembic upgrade head
    ```
-   Set in `.env`: `LLM_PROVIDER=ollama`, `OLLAMA_BASE_URL=http://ollama:11434`, `OLLAMA_MODEL=llama3.2:3b`. For production, use `LLM_PROVIDER=anthropic` and set `ANTHROPIC_API_KEY` and `ANTHROPIC_EXTRACTION_MODEL`.
-
-5. **Migrations:** Run once so the database schema is up to date:
+   If you see “already exists” errors, you can run:
    ```bash
-   docker-compose exec backend alembic upgrade head
+   docker compose exec backend alembic stamp head
    ```
-   If that fails with "already exists" (e.g. the DB was created earlier or by another process), sync Alembic only—without applying migrations—by running `docker-compose exec backend alembic stamp head`. After that, `upgrade head` will report "already at head" and stay in sync.
+   then try `upgrade head` again.
 
-6. Access the application:
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:8000
-   - API docs (Swagger): http://localhost:8000/docs
+6. **Open the app**
+   - **App (website):** http://localhost:3000  
+   - **API docs:** http://localhost:8000/docs  
 
-7. Run backend tests (**recommended: inside the backend container**, where all deps including pgvector and sentence-transformers are installed):
-   ```bash
-   docker-compose exec backend pytest app/tests -v
-   ```
-   Or run tests in a one-off container (builds and runs with same Dockerfile):
-   ```bash
-   docker-compose run --rm backend pytest app/tests -v
-   ```
-   (Paths are relative to the container working directory `/app`.) Phase 5+ dependencies are only guaranteed in the Docker image; running pytest on the host requires a full local install of `backend/requirements.txt`.
+7. **Sign up** in the app, then you can add product context, upload feedback (e.g. the sample CSV in `docs/`), and run extraction and clustering.
 
-## Local Python environment (single version)
+---
 
-This project uses **Python 3.10 only**. A virtualenv at the repo root keeps one consistent environment.
+## What’s inside the project?
 
-- **Create venv (once):**
-  ```bash
-  py -3.10 -m venv .venv
-  .venv\Scripts\pip install -r backend\requirements.txt
-  ```
-- **Run backend tests locally** (Postgres and Redis must be running, e.g. `docker-compose up -d db redis`):
-  - Ensure `TEST_DATABASE_URL` matches your Postgres (e.g. `.env.test` with `postgresql://postgres:postgres@127.0.0.1:5432/cursor_for_pms` to use Docker’s exposed DB). Credentials must match `POSTGRES_USER` / `POSTGRES_PASSWORD` in docker-compose.
-  ```bash
-  .venv\Scripts\python -m pytest backend\app\tests -v
-  ```
-  Or from the `backend` folder:
-  ```bash
-  cd backend
-  ..\.venv\Scripts\python -m pytest app/tests -v
-  ```
-- **Use this Python for everything** in this repo (run server, migrations, scripts):  
-  `\.venv\Scripts\python.exe` or activate first:  
-  `\.venv\Scripts\Activate.ps1` then `python` / `pip` / `pytest`.
+| Part | What it does |
+|------|----------------|
+| **Frontend** | React + TypeScript app: login, dashboard, upload feedback, view themes, briefs, and specs. |
+| **Backend** | FastAPI (Python): handles users, feedback, themes, briefs, specs, and calls to the AI model. |
+| **Worker** | Background jobs: runs AI extraction on each feedback item, enrichment, clustering, and spec generation. |
+| **Database** | PostgreSQL with pgvector: stores users, feedback, themes, briefs, specs, and vector embeddings. |
+| **Redis** | Used as a message queue so the worker can process jobs in the background. |
+| **Ollama** | Runs the AI model (e.g. Llama) inside Docker so the app can “read” and structure feedback. |
 
-## Acceptance criteria
+All of this is described in more detail in the **docs** folder: phase-by-phase plan and architecture in plain English.
 
-See [docs/PHASE_1_SPEC.md](docs/PHASE_1_SPEC.md) for Phase 1 acceptance criteria.
+---
+
+## Running tests
+
+From the project root:
+
+```bash
+docker compose exec backend pytest app/tests -v
+```
+
+Paths are relative to the backend app inside the container (`/app`).
+
+---
+
+## Documentation
+
+- **[docs/README.md](docs/README.md)** — Index of all documentation.
+- **[docs/PHASES_OVERVIEW.md](docs/PHASES_OVERVIEW.md)** — What each phase does and how it fits together (plain English).
+- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** — High-level picture: how the app is built and how data flows.
+- **docs/phase_01_*.md through phase_08_*.md** — Per-phase plan and architecture.
+- **[docs/PHASE_1_SPEC.md](docs/PHASE_1_SPEC.md)** — Original detailed technical spec for Phase 1 (foundation).
+
+Sample data to try the full flow:
+
+- **docs/sample_feedback.csv** — Example feedback rows (upload in the app).
+- **docs/sample_customers.csv** — Example customer list (upload for enrichment).
+
+---
+
+## License and use
+
+This project is for learning and evaluation. Use it as a reference or starting point for your own product tooling.

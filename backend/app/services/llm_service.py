@@ -1,6 +1,6 @@
 """
-Provider-agnostic LLM service. All LLM calls go through call_llm().
-Supports Ollama (local) and Anthropic (API). No domain logic; returns parsed JSON.
+Provider-agnostic LLM service. call_llm() for extraction (JSON). call_chat_llm() for chat (text + optional tool calls).
+Supports Ollama (local) and Anthropic (API). No domain logic.
 """
 
 import json
@@ -14,7 +14,6 @@ from app.exceptions import ExternalServiceError
 from app.utils.logging import get_logger
 
 logger = get_logger(__name__)
-
 
 def _strip_markdown_fences(raw: str) -> str:
     """Remove markdown code fences (```json ... ```) if present."""
@@ -31,8 +30,10 @@ def _parse_json_response(raw: str) -> dict:
     return json.loads(stripped)
 
 
-def _call_ollama(system_prompt: str, prompt: str, temperature: float, max_tokens: int) -> str:
-    """Call Ollama /api/chat. Returns the message content text."""
+def _call_ollama(
+    system_prompt: str, prompt: str, temperature: float, max_tokens: int, use_json_format: bool = True
+) -> str:
+    """Call Ollama /api/chat. Returns the message content text. Skip format=json (many Ollama setups 500 with it); we parse JSON from raw text."""
     url = f"{settings.ollama_base_url.rstrip('/')}/api/chat"
     payload = {
         "model": settings.ollama_model,
@@ -42,8 +43,8 @@ def _call_ollama(system_prompt: str, prompt: str, temperature: float, max_tokens
         ],
         "stream": False,
         "options": {"temperature": temperature, "num_predict": max_tokens},
-        "format": "json",
     }
+    # Do not use "format": "json" - Ollama often returns 500. Prompt asks for JSON; we parse via _strip_markdown_fences + json.loads.
     with httpx.Client(timeout=settings.llm_timeout_seconds) as client:
         resp = client.post(url, json=payload)
         resp.raise_for_status()
@@ -66,6 +67,18 @@ def _call_anthropic(system_prompt: str, prompt: str, temperature: float, max_tok
     if not msg.content or not hasattr(msg.content[0], "text"):
         return ""
     return msg.content[0].text.strip()
+
+
+def call_chat_llm(
+    system_prompt: str,
+    messages: list[dict],
+    tools: list[dict] | None = None,
+    temperature: float | None = None,
+    max_tokens: int | None = None,
+):
+    """Delegate to llm_chat for chat flow. Kept here for import compatibility."""
+    from app.services.llm_chat import call_chat_llm as _call_chat_llm
+    return _call_chat_llm(system_prompt, messages, tools, temperature, max_tokens)
 
 
 def call_llm(

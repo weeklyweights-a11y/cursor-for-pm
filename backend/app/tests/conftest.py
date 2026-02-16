@@ -22,10 +22,14 @@ from app.models.base import Base
 from app.models.organization import Organization
 from app.models.user import User
 from app.models.batch import Batch  # noqa: F401 - register for create_all
+from app.models.brief import Brief  # noqa: F401
+from app.models.conversation import Conversation  # noqa: F401
+from app.models.spec import Spec  # noqa: F401
 from app.models.customer import Customer  # noqa: F401
 from app.models.domain_mapping import DomainMapping  # noqa: F401
 from app.models.feedback_item import FeedbackItem  # noqa: F401
 from app.models.match_review import MatchReviewQueue  # noqa: F401
+from app.models.message import Message  # noqa: F401
 from app.models.scoring_config import ScoringConfig  # noqa: F401
 from app.models.slack_connection import SlackConnection  # noqa: F401
 from app.models.theme import Theme  # noqa: F401
@@ -39,15 +43,20 @@ engine = create_engine(_test_db_url, pool_pre_ping=True, poolclass=NullPool)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 # Table names for truncation (TestClient runs app in another thread, so we clean between tests.)
+# Order: child tables before parents (messages before conversations).
 _TEST_TABLES = [
     "match_review_queue",
     "domain_mappings",
     "feedback_items",
+    "specs",
+    "briefs",
     "themes",
     "scoring_configs",
     "customers",
     "slack_connections",
     "batches",
+    "messages",
+    "conversations",
     "users",
     "product_contexts",
     "organizations",
@@ -266,3 +275,107 @@ def sample_feedback_with_embedding(db: Session, test_org: Organization, test_the
         "outlier_item": outlier_item,
         "unclustered_item": unclustered_item,
     }
+
+
+@pytest.fixture
+def sample_conversation(db: Session, test_org: Organization, test_user: User) -> Conversation:
+    """Create a conversation for test_user in test_org."""
+    conv = Conversation(org_id=test_org.id, user_id=test_user.id, title="Test chat", is_active=True)
+    db.add(conv)
+    db.commit()
+    db.refresh(conv)
+    return conv
+
+
+@pytest.fixture
+def sample_messages(db: Session, sample_conversation: Conversation, test_org: Organization):
+    """Create three messages in sample_conversation: user, assistant, user."""
+    m1 = Message(
+        conversation_id=sample_conversation.id,
+        org_id=test_org.id,
+        role="user",
+        content="First user message",
+    )
+    m2 = Message(
+        conversation_id=sample_conversation.id,
+        org_id=test_org.id,
+        role="assistant",
+        content="Assistant reply",
+        context_used={"feedback_items_searched": 10},
+    )
+    m3 = Message(
+        conversation_id=sample_conversation.id,
+        org_id=test_org.id,
+        role="user",
+        content="Second user message",
+    )
+    for m in (m1, m2, m3):
+        db.add(m)
+    db.commit()
+    for m in (m1, m2, m3):
+        db.refresh(m)
+    return [m1, m2, m3]
+
+
+@pytest.fixture
+def sample_brief(db: Session, test_org: Organization, test_user: User, test_theme: Theme):
+    """Create a completed brief for test_theme."""
+    from app.models.brief import Brief
+    sections = [
+        {"key": "problem_statement", "title": "Problem Statement", "content": "Test problem.", "generated_at": "2026-01-01T00:00:00Z", "edited": False, "edit_history": []},
+        {"key": "customer_impact", "title": "Customer Impact", "content": "Test impact.", "generated_at": "2026-01-01T00:00:00Z", "edited": False, "edit_history": []},
+    ]
+    brief = Brief(
+        org_id=test_org.id,
+        theme_id=test_theme.id,
+        created_by=test_user.id,
+        version=1,
+        status="completed",
+        title=f"{test_theme.name} — Evidence Brief",
+        sections=sections,
+        is_current=True,
+    )
+    db.add(brief)
+    db.commit()
+    db.refresh(brief)
+    return brief
+
+
+@pytest.fixture
+def sample_brief_with_evaluation(db: Session, sample_brief: Brief):
+    """Add solution_evaluation to sample_brief so spec generation can be tested."""
+    sample_brief.solution_evaluation = {
+        "solution_description": "Test solution",
+        "evaluation": {"coverage_score": 0.8, "pain_points_addressed": []},
+        "evaluated_at": "2026-01-01T00:00:00Z",
+    }
+    db.commit()
+    db.refresh(sample_brief)
+    return sample_brief
+
+
+@pytest.fixture
+def sample_spec(db: Session, test_org: Organization, test_user: User, test_theme: Theme, sample_brief_with_evaluation: Brief):
+    """Create a completed spec for the brief with solution evaluation."""
+    from app.models.spec import Spec
+    sections = [
+        {"key": "executive_summary", "title": "Executive Summary", "content": "Test summary.", "generated_at": "2026-01-01T00:00:00Z", "edited": False, "edit_history": []},
+        {"key": "user_stories", "title": "User Stories", "content": "US-1: Test story.", "generated_at": "2026-01-01T00:00:00Z", "edited": False, "edit_history": []},
+    ]
+    spec = Spec(
+        org_id=test_org.id,
+        brief_id=sample_brief_with_evaluation.id,
+        theme_id=test_theme.id,
+        created_by=test_user.id,
+        version=1,
+        status="completed",
+        title=f"{test_theme.name} — Implementation Spec",
+        scope="full",
+        target_audience="mixed",
+        sections=sections,
+        is_current=True,
+    )
+    db.add(spec)
+    db.commit()
+    db.refresh(spec)
+    return spec

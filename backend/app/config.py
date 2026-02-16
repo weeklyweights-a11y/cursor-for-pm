@@ -61,6 +61,26 @@ class Settings(BaseSettings):
     hdbscan_min_samples: int = 2
     recluster_threshold: int = 50
 
+    # Phase 6: Chat (conversational layer)
+    chat_llm_model: str = "llama3.2:3b"
+    chat_max_history: int = 20
+    chat_max_rag_items: int = 20
+    chat_max_response_tokens: int = 1500
+    chat_temperature: float = 0.3
+    chat_timeout_seconds: int = 60
+
+    # Phase 7: Evidence briefs
+    brief_llm_model: str = "llama3.2:3b"
+    brief_max_section_tokens: int = 1000
+    brief_temperature: float = 0.4
+    brief_timeout_seconds: int = 60
+
+    # Phase 8: Agent-ready specs
+    spec_llm_model: str = "llama3.2:3b"
+    spec_max_section_tokens: int = 1500
+    spec_temperature: float = 0.3
+    spec_timeout_seconds: int = 60
+
     model_config = {"env_file": _env_path if _env_path.exists() else None, "extra": "ignore"}
 
 

@@ -1,16 +1,31 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import { useAuth } from "../context/authContext";
 import { getReviewCount } from "../api/review";
+import type { PageContext } from "../types/chat";
+import { ChatFloatingButton } from "./ChatFloatingButton";
+import { ChatSidebar } from "./ChatSidebar";
 
 interface LayoutProps {
   children: React.ReactNode;
+}
+
+function usePageContext(): PageContext | null {
+  const location = useLocation();
+  const params = useParams<{ id?: string }>();
+  const path = location.pathname;
+  if (path.startsWith("/themes/") && params.id) return { type: "theme", id: params.id };
+  if (path.startsWith("/feedback/") && params.id) return { type: "feedback", id: params.id };
+  if (path.startsWith("/customers/") && params.id) return { type: "customer", id: params.id };
+  return null;
 }
 
 export function Layout({ children }: LayoutProps) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [reviewCount, setReviewCount] = useState(0);
+  const [chatOpen, setChatOpen] = useState(false);
+  const pageContext = usePageContext();
 
   useEffect(() => {
     getReviewCount()
@@ -86,12 +101,10 @@ export function Layout({ children }: LayoutProps) {
       <main className="flex-1 overflow-auto p-6 flex justify-center">
         <div className="w-full max-w-5xl">{children}</div>
       </main>
-      <aside className="w-[320px] bg-gray-100 border-l border-gray-200 flex flex-col p-4">
-        <h3 className="font-medium text-gray-700 mb-2">AI Assistant</h3>
-        <p className="text-sm text-gray-500 flex-1 flex items-center justify-center">
-          Chat will be available soon
-        </p>
-      </aside>
+      {chatOpen && (
+        <ChatSidebar isOpen={true} onClose={() => setChatOpen(false)} pageContext={pageContext} />
+      )}
+      {!chatOpen && <ChatFloatingButton onClick={() => setChatOpen(true)} />}
     </div>
   );
 }

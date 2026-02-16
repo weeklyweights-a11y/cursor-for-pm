@@ -1,0 +1,610 @@
+
+CURSOR FOR PMs
+Complete Technical Specification
+From Raw Feedback to Agent-Ready Specs
+
+8-Layer Processing Pipeline + Conversational AI Layer
+Version 1.0 — February 2026
+CONFIDENTIAL
+ 
+Table of Contents
+Table of Contents	1
+1. System Overview	1
+1.1 The Problem	1
+1.2 The Solution	1
+1.3 Pipeline Summary	1
+1.4 Core Tech Stack	1
+1.5 What We Are NOT Building	1
+1.6 Fallback Plan for LLM	1
+2. Layer 1: Data Ingestion	1
+2.1 What It Does	1
+2.2 Data Sources (MVP)	1
+2.3 How Connections Work	1
+2.4 What We Capture From Each Source	1
+2.5 Unified Schema (Layer 1 Output)	1
+2.6 Processing Mode	1
+2.7 Future Integrations (Just Add MCP Servers)	1
+3. Layer 2: Signal Extraction	1
+3.1 What It Does	1
+3.2 Why a Single LLM Call	1
+3.3 Product Context (From Onboarding)	1
+3.4 Extraction Prompt	1
+3.5 What the LLM Already Knows	1
+3.6 Layer 2 Output Schema (Added Fields)	1
+3.7 Processing Mode	1
+4. Layer 3: Enrichment	1
+4.1 What It Does	1
+4.2 What PM Realistically Has	1
+4.3 MVP: Minimal Customer Data	1
+4.4 Later: Rich Data via MCP	1
+4.5 The Matching Problem	1
+4.6 Smart Matching Flow (5 Steps)	1
+4.7 Key Benefit: Learning Over Time	1
+4.8 Domain Mappings Table (New)	1
+4.9 Layer 3 Output (Added Fields)	1
+5. Layer 4: Clustering & Theming	1
+5.1 What It Does	1
+5.2 Why Embeddings + HDBSCAN (Option B)	1
+5.3 Why all-MiniLM-L6-v2	1
+5.4 Why HDBSCAN Over K-means	1
+5.5 The Clustering Flow (6 Steps)	1
+5.6 Handling New Feedback	1
+5.7 When Does Clustering Run?	1
+5.8 Themes Table Schema	1
+6. Layer 5: Prioritization Engine	1
+6.1 What It Does	1
+6.2 MVP Scoring Factors (5 Factors)	1
+6.3 Scoring Flow	1
+6.4 PM Controls Everything	1
+6.5 Later: Revenue-Based Factors (With MCP)	1
+6.6 PM Settings Table	1
+6.7 When Does Scoring Run?	1
+7. Layer 6: Reasoning & Evidence	1
+7.1 What It Does	1
+7.2 Brief Generation Flow (7 Steps)	1
+7.3 Evidence Quotes Table	1
+7.4 Key Principle: No Hallucinated Data	1
+8. Layer 7: Solution Design	1
+8.1 What It Does	1
+8.2 Solution Generation Flow	1
+8.3 Why Each Scope Decision Is Justified	1
+8.4 PM Refinement Through Conversation	1
+8.5 Solutions Table Schema	1
+9. Layer 8: Agent-Ready Output	1
+9.1 What It Does	1
+9.2 Why Human PRDs Don't Work for Agents	1
+9.3 What Makes It Agent-Ready	1
+9.4 Spec Structure	1
+9.5 Export Formats	1
+9.6 Spec Generation Triggers	1
+10. Conversational AI Layer	1
+10.1 What It Does	1
+10.2 Where PM Can Interact	1
+10.3 Constraint-Aware AI Behavior	1
+10.4 AI Behavior Rules	1
+10.5 Constraints AI Should Ask About	1
+10.6 Conversation State (Persisted)	1
+11. Complete Database Schema	1
+11.1 All Tables	1
+12. How This Is Different	1
+12.1 vs Existing Feedback Tools (Canny, Productboard, Enterpret)	1
+12.2 vs Rezonant	1
+13. Implementation Roadmap	1
+13.1 Build Order	1
+
+
+ 
+1. System Overview
+Cursor for PMs is an AI-powered tool that transforms raw, unstructured customer feedback into prioritized, evidence-backed, agent-ready product specifications. It is designed for Product Managers who need to go from scattered customer signals to clear engineering specs, without spending weeks doing manual analysis.
+
+1.1 The Problem
+Product Managers today face a broken workflow. Customer feedback is scattered across Slack, support tickets, CSVs, sales call notes, and emails. PMs spend hours reading individual messages, manually tagging themes, guessing at priorities, writing PRDs from memory, and defending decisions with anecdotal evidence. The result is slow, biased, and often wrong prioritization.
+1.2 The Solution
+An 8-layer processing pipeline that automatically ingests feedback from any source, extracts structured signals, enriches with customer context, clusters into themes, scores priorities against PM goals, generates evidence-backed briefs, designs solutions, and outputs agent-ready specs for tools like Cursor or Claude Code. A conversational AI layer lets the PM interact with the system at every stage.
+1.3 Pipeline Summary
+Layer	Name	What It Does	Key Technology
+1	Data Ingestion	Takes raw feedback from Slack, CSV, manual input and normalizes to unified schema	MCP Servers, Papa Parse, Ollama
+2	Signal Extraction	Extracts pain points, topics, sentiment, urgency, feature gaps from each feedback item	NuExtract 1.5B via Ollama
+3	Enrichment	Matches feedback to customer profiles using smart matching (exact, saved, LLM fuzzy, PM review)	NuExtract 1.5B, Postgres
+4	Clustering & Theming	Groups similar feedback into themes using embeddings and HDBSCAN clustering	all-MiniLM-L6-v2, HDBSCAN, pgvector
+5	Prioritization	Scores themes by volume, urgency, sentiment, segment alignment, and strategic fit	SQL aggregations, NuExtract LLM
+6	Reasoning & Evidence	Generates briefs with evidence, impact analysis, counter-arguments, and rebuttals	NuExtract LLM
+7	Solution Design	Creates scoped solutions with user stories, flows, and edge cases from customer feedback	NuExtract LLM
+8	Agent-Ready Output	Produces structured specs that Cursor/Claude Code can directly execute	NuExtract LLM, Markdown
+
+1.4 Core Tech Stack
+Component	Technology	Why We Chose It
+LLM (extraction, naming, reasoning)	NuExtract 1.5B	Open-source, runs locally, optimized for structured extraction, no API costs
+LLM Runtime	Ollama	Simple local LLM server, one command to run any model
+Embedding Model	all-MiniLM-L6-v2	Fast (80MB), runs on CPU, 384-dim vectors, good quality for semantic similarity
+Embedding Runtime	Python sentence-transformers	Standard library for embedding models, works with all-MiniLM
+Clustering	HDBSCAN	No need to specify cluster count, handles outliers, finds dense regions automatically
+Vector Storage	Postgres + pgvector	Keep everything in one database, no separate vector DB needed
+Database	PostgreSQL	Reliable, supports JSONB for flexible metadata, pgvector extension for embeddings
+Integrations	MCP Servers	Plug-and-play connectors for Slack, later GitHub, Stripe, HubSpot, Salesforce
+CSV Parsing	Papa Parse	Fast, handles edge cases, browser and Node.js compatible
+Frontend	React	Standard choice for interactive chat interface
+Session Management	Redis	Fast in-memory store for active conversation sessions
+
+1.5 What We Are NOT Building
+•	No custom API code per data source — MCP servers handle integrations
+•	No external paid APIs (OpenAI, Clearbit, ZoomInfo) — everything runs locally
+•	No custom ML training — using pre-trained open-source models
+•	No separate vector database (Pinecone, Weaviate) — pgvector in Postgres
+•	No manual theme creation or fixed taxonomy — themes emerge from data
+•	No effort estimation or sprint planning — PM and engineering decide
+•	No Jira integration in MVP — can add later
+
+1.6 Fallback Plan for LLM
+If NuExtract 1.5B struggles with extraction quality, we have a clear escalation path:
+Step	Model	Size	Tradeoff
+1 (Default)	NuExtract 1.5B	1.5B params	Fast, free, optimized for extraction
+2 (Fine-tune)	NuExtract 1.5B fine-tuned	1.5B params	Train on PM's actual feedback data
+3 (Upgrade)	Llama 3.2 3B or Phi-3 3.8B	3-4B params	Better reasoning, still local
+4 (Last resort)	Claude API (Haiku)	Cloud	Best quality, but adds API cost
+
+
+2. Layer 1: Data Ingestion
+2.1 What It Does
+Takes customer feedback from any source, captures customer identity at the point of ingestion, and normalizes everything to a unified schema. This is the entry point for all data in the system.
+2.2 Data Sources (MVP)
+Source	Connection Method	Customer Identity Captured
+Slack	MCP Server (OAuth, plug and play)	User email (from Slack profile), user name, channel
+CSV Upload	Drag and drop, any column structure	Whatever columns PM included (email, customer name, etc.)
+Manual Input	Text form with optional customer fields	PM types in customer name and email (optional)
+
+2.3 How Connections Work
+npx cursor-for-pms connect slack
+MCP server handles OAuth. User authorizes once. Done. No custom API code needed.
+2.4 What We Capture From Each Source
+Slack (via MCP)
+Three-step process: get the message, fetch the user profile (separate MCP call), then combine into unified format.
+•	Step 1: Get message — text, user ID, channel, timestamp
+•	Step 2: Get user profile — email (the key identifier), real name
+•	Step 3: Combine into unified schema with author_email, author_name, source metadata
+
+CSV Upload
+PM uploads any CSV. We auto-detect columns using keyword matching:
+Field Type	Column Names We Detect
+Content	feedback, message, text, description, content, body
+Email	email, customer_email, user_email, requester_email
+Customer	customer, customer_name, company, organization, account
+Date	date, created, timestamp, time
+For unclear columns, the LLM (NuExtract) is used to identify which field is feedback content, which is email, etc.
+
+Manual Input
+Simple form with required feedback text and optional customer name, customer email, and source description fields.
+2.5 Unified Schema (Layer 1 Output)
+Field	Type	Source	Description
+id	uuid	System generated	Unique identifier for this feedback item
+content	string	All sources	The raw feedback text
+source_type	enum: slack | csv | manual	System	Which input channel
+source_id	string | null	Slack/CSV	Original ID from source system
+timestamp	timestamp	All sources	When the feedback was created
+author_email	string | null	All sources	Email of the person who gave feedback
+author_name	string | null	Slack/Manual	Name of the person
+organization_name	string | null	CSV/Manual	Company name if available
+metadata	jsonb	All sources	Source-specific data (channel, thread_id, row_number, etc.)
+created_at	timestamp	System	When this record was created in our system
+updated_at	timestamp	System	Last modification time
+
+2.6 Processing Mode
+Real-time. Feedback is processed immediately upon ingestion. No batch processing for Layer 1.
+2.7 Future Integrations (Just Add MCP Servers)
+Source	MCP Server	Customer Identity We Get
+Google Drive	Google Drive MCP	File owner email
+Notion	Notion MCP	Page author
+Gmail	Gmail MCP	Sender email
+Zendesk	Zendesk MCP	Requester email, organization
+Intercom	Intercom MCP	User email, company
+
+
+3. Layer 2: Signal Extraction
+3.1 What It Does
+Takes normalized feedback from Layer 1 and extracts structured signals using a single LLM call. The LLM combines each feedback item with the PM's product context (from onboarding) to extract pain points, topics, sentiment, urgency, feature gaps, and verbatim quotes.
+3.2 Why a Single LLM Call
+Instead of running separate ML models for sentiment analysis, topic detection, and urgency classification, we use one LLM prompt that extracts everything at once. This is simpler, faster, and the LLM naturally understands how these fields relate to each other.
+3.3 Product Context (From Onboarding)
+PM provides this once during setup. It gives the LLM the context to understand what features exist, what the product does, and what its known limitations are.
+Field	Example	Why It Matters
+product_description	Document management tool for teams	LLM understands what domain the feedback is about
+existing_features	search, file sharing, folders, permissions, comments	LLM can identify if feedback is about an existing feature or a new request
+target_users	Small to medium businesses	Context for urgency and segment
+known_limitations	No mobile app, basic search without filters	LLM can recognize known issues vs new problems
+3.4 Extraction Prompt
+The LLM receives the product context plus each feedback item and returns structured JSON:
+Product: {product_context}  |  Feedback: {feedback_text}  |  Extract: pain_point, topic, related_feature, is_existing_feature, feature_gap, urgency, sentiment, verbatim_quote
+3.5 What the LLM Already Knows
+•	What frustration sounds like → sentiment detection
+•	What urgency sounds like → words like 'deadline', 'blocking', 'immediately'
+•	How to summarize the core issue → pain_point extraction
+•	How to match feedback to existing features → related_feature identification
+3.6 Layer 2 Output Schema (Added Fields)
+Field	Type	Description
+pain_point	string	What the customer is struggling with
+topic	string	Category of the feedback (search, authentication, performance, etc.)
+related_feature	string	Which existing or requested feature this relates to
+is_existing_feature	boolean	True if feedback is about an existing feature, false if new request
+feature_gap	string | null	What's missing (filtering, relevance ranking, etc.)
+urgency	enum: low | medium | high | critical	How urgent this is for the customer
+sentiment	enum: positive | neutral | negative	Customer's emotional tone
+verbatim_quote	string	Key quote extracted directly from feedback
+extraction_confidence	number (0-1)	Model's confidence in the extraction
+extracted_at	timestamp	When extraction was performed
+
+3.7 Processing Mode
+Real-time. Extraction runs immediately when feedback arrives from Layer 1. No human review needed. Low-confidence extractions are stored with their confidence score so PM can review later if needed.
+
+
+4. Layer 3: Enrichment
+4.1 What It Does
+Matches feedback to customer profiles and attaches business context. Uses smart matching to handle the real-world problem where company names and email domains don't exactly match between feedback sources and customer databases.
+4.2 What PM Realistically Has
+Most PMs don't have a spreadsheet with ARR, churn risk, and renewal dates. That data lives in Salesforce (sales team), Stripe (finance), or a CSM's head. So we only ask for what PM actually knows.
+Field	PM Has It?	Where It Actually Lives
+Company name	Yes	PM knows this
+Domain	Yes	PM knows this
+Segment (SMB/Enterprise)	Yes	PM has rough idea
+ARR	Maybe	Finance / Stripe
+Industry	Maybe	CRM
+Renewal date	No	Sales / CS
+Churn risk	No	Calculated or gut feel
+CSM owner	Maybe	CRM
+Plan tier	Yes	PM knows this
+
+4.3 MVP: Minimal Customer Data
+PM uploads a simple CSV with just 2-3 columns. That's enough for matching and basic segmentation.
+| domain       | company_name | segment    |
+| acme.com     | Acme Inc     | enterprise |
+| bigcorp.io   | BigCorp      | enterprise |
+| startupx.co  | StartupX     | smb        |
+4.4 Later: Rich Data via MCP
+Connect to Stripe, HubSpot, Salesforce via MCP servers. PM doesn't manually enter ARR, renewal dates, or churn risk. The system pulls it automatically.
+npx cursor-for-pms connect stripe
+npx cursor-for-pms connect hubspot
+4.5 The Matching Problem
+Exact matching fails in the real world. Slack says john@acme-corp.com but the CSV has acme.com. Slack says 'Acme Corporation' but the CSV has 'Acme Inc'. We need smart matching.
+4.6 Smart Matching Flow (5 Steps)
+Step	Method	How It Works	LLM Used?
+1	Exact domain match	Extract domain from email, look up in customers.domain	No
+2	Check saved mappings	Look up in domain_mappings table (previously matched domains)	No
+3	LLM fuzzy match	Ask LLM: 'Is Acme Corporation the same as Acme Inc?' with confidence score	Yes
+4	PM review	If confidence 0.5-0.85, queue for PM: 'Is Acme Corporation same as Acme Inc?'	No
+5	No match	Store as unmatched (customer_id: null), PM can manually tag later	No
+
+4.7 Key Benefit: Learning Over Time
+First time we see acme-corp.com: LLM matches to 'Acme Inc' with 92% confidence, saved to domain_mappings. Second time we see acme-corp.com: Found in domain_mappings instantly, no LLM call needed. The system gets faster and smarter as more feedback comes in.
+4.8 Domain Mappings Table (New)
+Field	Type	Description
+id	uuid	Unique identifier
+source_domain	string	Domain we saw in feedback (e.g., acme-corp.com)
+source_company_name	string | null	Company name from feedback (e.g., Acme Corporation)
+matched_customer_id	uuid	Foreign key to customers table
+match_method	enum: exact | llm_fuzzy | manual	How the match was made
+confidence	number (0-1)	Match confidence score
+confirmed_by_pm	boolean	Whether PM confirmed this mapping
+created_at	timestamp	When mapping was created
+4.9 Layer 3 Output (Added Fields)
+Field	Type	MVP	Later (MCP)
+customer_id	uuid | null	Yes	Yes
+customer_domain	string | null	Yes	Yes
+customer_name	string | null	Yes	Yes
+segment	enum: smb | mid_market | enterprise | null	Yes	Yes
+arr	number | null	No	Yes (Stripe)
+industry	string | null	No	Yes (CRM)
+plan_tier	string | null	No	Yes (Stripe)
+renewal_date	date | null	No	Yes (CRM)
+days_until_renewal	number | null	No	Calculated
+churn_risk	enum: low | medium | high | null	No	Yes (CRM)
+csm_owner	string | null	No	Yes (CRM)
+match_method	enum: exact | saved_mapping | llm_fuzzy | manual | null	Yes	Yes
+match_confidence	number | null	Yes	Yes
+match_status	enum: matched | auto_matched | pm_review | unmatched	Yes	Yes
+
+
+5. Layer 4: Clustering & Theming
+5.1 What It Does
+Groups similar feedback into themes so PM sees '47 people complaining about search' instead of reading 47 individual messages. Uses embeddings for semantic similarity and HDBSCAN for automatic cluster detection.
+5.2 Why Embeddings + HDBSCAN (Option B)
+We evaluated five approaches and chose Option B: Embeddings + Clustering Algorithm.
+Option	Approach	Semantic Understanding	Scale	Complexity	Chosen?
+A	Group by topic field from Layer 2	Low	High	Low	No
+B	Embeddings + clustering algorithm	Medium-High	High	Medium	YES
+C	LLM-based clustering (send all to LLM)	High	Low (token limits)	Low	No
+D	BERTopic / hierarchical topic modeling	Medium	High	Medium	No
+E	Embedding + LLM hybrid (two-step)	High	High	High	Later
+
+Option B wins because it provides semantic understanding without LLM cost, scales to thousands of feedbacks, and we already need the embedding model for similarity search later. We can upgrade to Option E (adding LLM review) in the future.
+5.3 Why all-MiniLM-L6-v2
+•	Small and fast: only 80MB, runs on CPU without GPU
+•	384-dimensional vectors: good balance of quality and storage
+•	Well-tested: most popular sentence embedding model on Hugging Face
+•	Runs via sentence-transformers Python library
+•	Free and open-source, no API costs
+5.4 Why HDBSCAN Over K-means
+Feature	K-means	HDBSCAN
+Need to specify cluster count?	Yes (must guess how many themes)	No (figures it out)
+Handles outliers?	No (forces everything into a cluster)	Yes (labels noise as -1)
+Finds non-spherical clusters?	No	Yes
+Speed	Fast	Medium
+We don't know how many themes will emerge from feedback. HDBSCAN discovers them automatically and marks outlier feedback that doesn't fit any theme.
+5.5 The Clustering Flow (6 Steps)
+Step 1: Create Embedding
+Combine pain_point + feature_gap + verbatim_quote into a single text string. Run through all-MiniLM-L6-v2 to get a 384-dimension vector per feedback item.
+Step 2: Store Embeddings
+Save vectors to Postgres using pgvector extension. No separate vector database needed.
+Step 3: Cluster with HDBSCAN
+Run HDBSCAN with min_cluster_size=3 (minimum feedbacks to form a theme) and min_samples=2. Algorithm finds dense regions and groups similar feedback automatically.
+Step 4: Calculate Centroids
+For each cluster, compute the average embedding vector (centroid). Used later for assigning new feedback to existing themes and finding similar themes.
+Step 5: LLM Names Each Cluster
+Sample 10 representative feedbacks closest to centroid. Ask LLM to provide a short name (3-5 words), a one-sentence description, and any distinct sub-themes within the cluster.
+Step 6: Aggregate Stats
+For each theme, calculate: mention count, unique customers, segment breakdown, urgency breakdown, sentiment breakdown, top verbatim quotes, and top customers by mention count.
+5.6 Handling New Feedback
+•	Generate embedding for new feedback
+•	Compare to all theme centroids using cosine similarity
+•	If similarity > 0.7: assign to existing theme, update stats
+•	If similarity < 0.7: mark as 'unassigned'
+•	When 10+ unassigned items accumulate: trigger full re-clustering
+5.7 When Does Clustering Run?
+Trigger	Action
+Initial data load	Full clustering of all feedback
+10+ unassigned feedbacks	Re-cluster everything
+PM requests 'refresh themes'	Re-cluster everything
+Weekly scheduled	Re-cluster everything
+5.8 Themes Table Schema
+Field	Type	Description
+id	uuid	Unique theme identifier
+name	string	Theme name from LLM (e.g., 'Search Filtering & Relevance')
+description	string	One-sentence description
+sub_themes	string[]	Distinct sub-issues within this theme
+mention_count	number	Total feedback items in this theme
+unique_customers	number	Distinct customers mentioning this theme
+segment_breakdown	jsonb	e.g., { enterprise: 28, smb: 7 }
+urgency_breakdown	jsonb	e.g., { high: 20, medium: 15, low: 7 }
+sentiment_breakdown	jsonb	e.g., { negative: 40, neutral: 5 }
+top_quotes	string[]	Most representative verbatim quotes
+top_customers	jsonb	Customers with most mentions in theme
+embedding_centroid	vector(384)	Average embedding for theme assignment
+cluster_id	number	HDBSCAN cluster ID
+
+
+6. Layer 5: Prioritization Engine
+6.1 What It Does
+Scores themes so PM knows what to build first. Not just '47 mentions' but a weighted score that factors in urgency, customer segment, sentiment, and alignment with PM's strategic goals.
+6.2 MVP Scoring Factors (5 Factors)
+We only score based on data we actually have. Revenue-based factors come later when MCP connections to Stripe/CRM are available.
+Factor	What It Measures	How It's Calculated	Default Weight
+Volume	How many people mentioned it	Normalize: most mentions = 100, others proportional	20%
+Urgency	How critical the pain is	Weighted avg: critical=100, high=75, medium=50, low=25	25%
+Sentiment	How negative the feedback is	% of negative sentiment in theme	15%
+Segment Alignment	Does it match PM's target segments	% of mentions from PM's target segments	20%
+Strategic Fit	Aligns with PM's stated goals	LLM scores 0-100 alignment with goals	20%
+
+6.3 Scoring Flow
+Step 1: Load PM's strategic context (goals, target segments, weights) from pm_settings table. Step 2: Calculate each factor score (0-100) for each theme. Step 3: Apply weights and calculate total score. Step 4: Rank themes by total score.
+6.4 PM Controls Everything
+PM can adjust weights at any time. Changing weights triggers an immediate re-score of all themes. PM can also update strategic goals and target segments, which affects the strategic fit score.
+6.5 Later: Revenue-Based Factors (With MCP)
+Factor	What It Measures	Data Source
+Revenue at Risk	Sum ARR where churn_risk = high or days_until_renewal < 90	Stripe / CRM MCP
+Revenue Blocked	Pipeline deals stuck because of missing feature	CRM MCP
+Trend	% change in mentions vs last period	Historical data
+6.6 PM Settings Table
+Field	Type	Description
+id	uuid	Unique identifier
+user_id	uuid	PM user reference
+strategic_goals	string[]	e.g., ['Enterprise expansion', 'Reduce churn']
+target_segments	string[]	e.g., ['enterprise', 'mid_market']
+priority_weights	jsonb	e.g., { volume: 20, urgency: 25, sentiment: 15, segment_alignment: 20, strategic_fit: 20 }
+6.7 When Does Scoring Run?
+Trigger	Action
+Themes created or updated	Score all themes
+PM changes weights	Re-score all themes
+PM changes strategic goals	Re-score all themes
+New feedback assigned to theme	Re-score that theme
+
+
+7. Layer 6: Reasoning & Evidence
+7.1 What It Does
+Generates comprehensive briefs for each theme. Not just scores but why this matters, what's the evidence, what happens if we build it, what happens if we don't, and what are the counter-arguments. Everything a PM needs to make and defend a decision.
+7.2 Brief Generation Flow (7 Steps)
+Step	What It Does	LLM Used?
+1. Gather evidence	Pull all feedback items in this theme from database	No (SQL)
+2. Executive summary	Generate 2-3 sentence summary of what customers want and why it matters	Yes
+3. Structure evidence	Organize stats, customer quotes with full attribution (name, company, source, date)	No (formatting)
+4. Impact analysis	Generate 'If we build' benefits and 'If we don't build' risks	Yes
+5. Counter-arguments	Play devil's advocate: reasons NOT to build this now	Yes
+6. Rebuttals	Counter each argument: why they might be wrong or less important	Yes
+7. Compile brief	Assemble everything into a formatted brief document	No (template)
+7.3 Evidence Quotes Table
+Full attribution for every quote, so PM can trace back to the actual customer and source.
+Field	Type	Description
+id	uuid	Unique identifier
+theme_id	uuid	Foreign key to themes table
+feedback_id	uuid	Foreign key to feedback_items table
+quote_text	string	The verbatim quote
+author_name	string	Who said it
+author_title	string | null	Their role/title if available
+customer_name	string	Company name
+customer_segment	string	SMB / Enterprise
+source_type	string	slack / csv / manual
+source_detail	string	Channel name, CSV filename, etc.
+timestamp	timestamp	When they said it
+7.4 Key Principle: No Hallucinated Data
+All evidence comes from actual feedback in the database. The LLM generates summaries, impact analysis, and counter-arguments, but never invents quotes, customer names, or statistics. Every claim can be traced back to a real feedback item.
+
+
+8. Layer 7: Solution Design
+8.1 What It Does
+Takes the theme brief from Layer 6 and generates a concrete solution: what to build, how it should work, what's in scope, what's out of scope. All based on actual customer feedback, not guessing.
+8.2 Solution Generation Flow
+•	Step 1: Extract specific asks from all feedback in the theme (e.g., 'SAML support' mentioned 8 times, 'Okta integration' 5 times)
+•	Step 2: Load product context from onboarding (existing features, known limitations)
+•	Step 3: LLM generates solution with problem statement, proposed solution, MVP scope with reasons, out of scope with reasons, user stories, key user flows, edge cases, and open questions for PM
+•	Step 4: Structure the output into a reviewable format
+
+8.3 Why Each Scope Decision Is Justified
+Every item in MVP scope includes why it's included (e.g., '8 out of 12 customer requests'). Every item in out-of-scope includes why it's deferred (e.g., 'only 1 mention, adds complexity'). This makes scope discussions evidence-based rather than opinion-based.
+8.4 PM Refinement Through Conversation
+PM can modify the solution through natural conversation:
+•	'Remove Azure AD from MVP' → AI moves it to out-of-scope, notes the impact
+•	'Add SCIM to scope' → AI adds it, warns about added complexity
+•	'What are the edge cases?' → AI lists edge cases with suggested handling
+8.5 Solutions Table Schema
+Field	Type	Description
+id	uuid	Unique identifier
+theme_id	uuid	Foreign key to themes table
+problem_statement	string	1-2 sentence problem definition
+proposed_solution	string	High-level solution description
+mvp_scope	jsonb	Array of { item, reason } for in-scope items
+out_of_scope	jsonb	Array of { item, reason } for deferred items
+user_stories	jsonb	Array of { role, action, benefit }
+user_flows	jsonb	Array of { name, steps[] }
+edge_cases	jsonb	Array of { case, handling }
+open_questions	string[]	Questions PM needs to answer
+pm_notes	text	PM's additional context and constraints
+refinement_history	jsonb	Track all changes PM made
+status	enum: draft | refined | approved	Current status
+
+
+9. Layer 8: Agent-Ready Output
+9.1 What It Does
+Takes the solution design from Layer 7 and generates a structured spec file that AI coding agents (Cursor, Claude Code) can directly execute. Not a human PRD but a structured spec designed for machines.
+9.2 Why Human PRDs Don't Work for Agents
+•	Too vague: 'make it user-friendly' means nothing to an agent
+•	Missing technical context: no database schemas, no API specs
+•	No clear acceptance criteria: agent can't verify completion
+•	No task breakdown: agent doesn't know where to start or what order to follow
+9.3 What Makes It Agent-Ready
+Element	Why It Helps Agents
+Context section with customer evidence	Agent understands WHY, not just WHAT
+Structured user stories with acceptance criteria	Clear scope boundaries and checkable completion
+Database schema as ready-to-run SQL	Agent can execute directly, no guessing
+API endpoint specs with inputs/outputs	Agent knows exact interface contracts
+Ordered task list with dependencies	Agent knows the correct sequence
+'Files to create/modify' per task	Agent knows exactly where to work in the codebase
+'Done when' criteria per task	Agent can self-verify completion
+Edge cases table with handling	Agent handles exceptions, not just happy path
+Customer evidence section	Agent can include context in code comments
+9.4 Spec Structure
+The generated markdown spec includes these sections in order:
+•	Context: Why we're building this, customer evidence, success metrics
+•	User Stories: Each with role, action, benefit, and acceptance criteria checkboxes
+•	Technical Requirements: Database changes (SQL), API endpoints (REST), UI components (file paths)
+•	Tasks: Ordered list with files to create/modify and 'done when' criteria per task
+•	Edge Cases: Table of edge case + handling approach
+•	Evidence: Customer quotes that drove this decision
+9.5 Export Formats
+Format	Use Case
+Markdown (.md)	Cursor, Claude Code, GitHub — primary format
+JSON	API consumption, integrations
+PDF	Stakeholder sharing, presentations
+9.6 Spec Generation Triggers
+Trigger	Action
+PM requests 'generate spec'	Generate spec from current solution
+PM approves solution design	Auto-generate spec
+PM says 'make this agent-ready'	Generate spec
+
+
+10. Conversational AI Layer
+10.1 What It Does
+The conversational layer is not a separate layer. It is woven throughout all 8 layers, allowing the PM to interact with the system at every stage. The PM asks questions, provides context, challenges findings, refines scope, and approves outputs through natural conversation.
+10.2 Where PM Can Interact
+Layer	Example PM Commands
+Layer 1: Ingest	'Connect my Slack', 'Upload this CSV', 'Add this feedback manually'
+Layer 2: Extract	(Automatic — no conversation needed)
+Layer 3: Enrich	'That feedback is from BigCorp', 'Yes, Acme Corporation is Acme Inc', 'Upload my customer list'
+Layer 4: Cluster	'What themes are emerging?', 'Refresh the themes', 'Split this theme into two'
+Layer 5: Prioritize	'What should we build next?', 'Compare search vs SSO', 'Weight revenue higher', 'Focus on enterprise only'
+Layer 6: Reason	'Tell me more about SSO requests', 'Show me the evidence', 'Who is asking for this?', 'What is the counter-argument?'
+Layer 7: Design	'What should we build for this?', 'Remove Azure AD from MVP', 'Add SCIM to scope'
+Layer 8: Output	'Generate a spec', 'Make this agent-ready', 'Export as markdown'
+10.3 Constraint-Aware AI Behavior
+The AI does NOT know the PM's real-world constraints. Team size, budget, deadlines, strategic shifts, commitments to stakeholders, key account urgency — only the PM knows these. The AI must ask for constraints, not assume them, and adjust recommendations when PM provides context.
+
+What AI Knows vs What PM Knows
+AI Knows (From Data)	PM Knows (AI Does Not)
+47 people want search improvements	We only have 2 engineers available
+SSO is top priority by score	Our lead backend dev is on leave
+Enterprise segment wants SSO	CEO already promised search to the board
+12 customers mentioned SSO	BigCorp renews in 3 weeks ($200k ARR)
+Counter-arguments exist for both options	Budget is frozen until Q2
+Technical scope options for SSO	Legal blocked SSO due to compliance review
+Theme rankings by weighted score	We are pivoting away from enterprise
+10.4 AI Behavior Rules
+Rule	Wrong	Right
+Never assume constraints	'SSO will take 6 weeks'	'SSO is typically 6-8 weeks with 2-3 engineers. What is your team capacity?'
+Always ask before recommending	'You should build SSO first'	'SSO scores highest, but I don't know your constraints. Any context I should factor in?'
+Adjust when PM provides context	'SSO is still #1 priority'	'Given 2 engineers and 2 weeks, SSO won't fit. Here are options that might work...'
+Surface tradeoffs	'Do the minimal scope'	'Minimal scope fits timeline but won't cover Azure AD users. Is that acceptable?'
+Remember constraints throughout	'You could add SCIM'	'SCIM would add 2 weeks. You mentioned tight timeline, so I'd suggest keeping it out of scope.'
+Proactively ask about key accounts	(Only use aggregate data)	'BigCorp is in this theme with $200k ARR. Any specific urgency with them?'
+10.5 Constraints AI Should Ask About
+Category	Questions to Ask
+Team	How many engineers? Who is available? Any specialists needed?
+Timeline	Deadline? External commitments? Renewal dates?
+Budget	Frozen? Limited? Need approval?
+Strategic	Pivoting? Fundraising? Board commitments?
+Dependencies	Waiting on other teams? Legal review? Security audit?
+Customers	Key accounts at risk? Promises made? Champions?
+Technical	Tech debt blocking? Infrastructure limits?
+10.6 Conversation State (Persisted)
+Field	Type	Description
+conversation_id	uuid	Unique conversation identifier
+user_id	uuid	PM user reference
+strategic_goals	string[]	PM's stated goals for this session
+constraints	jsonb	Team size, timeline, budget, blockers, etc.
+current_theme_id	uuid | null	Theme PM is currently focused on
+current_solution_id	uuid | null	Solution PM is currently refining
+decisions	jsonb	All decisions made with reasons
+explored_themes	uuid[]	Themes discussed in this conversation
+messages	jsonb	Full conversation history
+
+
+11. Complete Database Schema
+11.1 All Tables
+Table	Created By	Purpose
+feedback_items	Layer 1, updated by 2, 3, 4	Core table: every feedback item with all extracted/enriched fields
+customers	Layer 3 (PM CSV upload)	Customer profiles for matching
+domain_mappings	Layer 3 (smart matching)	Learned domain-to-customer mappings
+themes	Layer 4, updated by 5, 6	Clustered themes with stats, scores, and briefs
+solutions	Layer 7	Solution designs with scope, user stories, flows
+specs	Layer 8	Agent-ready specifications
+evidence_quotes	Layer 6	Full-attribution quotes for briefs
+product_context	Onboarding	PM's product description, features, limitations
+pm_settings	Layer 5	PM's strategic goals, weights, target segments
+conversations	Conversational layer	Conversation state, decisions, constraints
+
+
+12. How This Is Different
+12.1 vs Existing Feedback Tools (Canny, Productboard, Enterpret)
+Capability	Existing Tools	Cursor for PMs
+Input	Users submit feedback via portal/widget	Ingest from Slack, CSV, manual — go where feedback already is
+Analysis	Basic categorization, voting	LLM extraction + embedding-based clustering
+Customer matching	Manual tagging	Smart matching with learning over time
+Prioritization	Simple voting or manual ranking	Weighted multi-factor scoring with PM-controlled weights
+Evidence	List of votes/requests	Full briefs with impact analysis, counter-arguments, rebuttals
+Output	Feature request list	Agent-ready specs for Cursor/Claude Code
+AI	Basic sentiment/categorization	LLM throughout: extraction, matching, naming, reasoning, design
+12.2 vs Rezonant
+Rezonant transforms PRDs into Jira/Linear tickets and deploys coding agents. They start AFTER the PM already knows what to build. Cursor for PMs tackles the harder upstream problem: figuring out WHAT to build in the first place, backed by evidence. The two are complementary, not competitive. Our Layer 8 output could feed directly into Rezonant.
+Aspect	Rezonant	Cursor for PMs
+Input	PM has already written a PRD	Raw customer feedback (no PRD exists yet)
+Core value	PRD → tickets → code	Feedback → 'what should we build and why'
+Layers covered	Equivalent to Layer 8 only	Layers 1 through 8
+PM still does	All the thinking (what to build, why, evidence)	Refines and approves AI recommendations
+
+13. Implementation Roadmap
+13.1 Build Order
+Phase	What to Build	Why This Order
+Phase 1	Layer 1 (Ingestion) + Layer 2 (Extraction) + Postgres schema	Get data flowing and structured first
+Phase 2	Layer 3 (Enrichment with smart matching)	Customer context makes everything else more valuable
+Phase 3	Layer 4 (Clustering) + pgvector + embeddings	Themes are the unit of analysis for everything downstream
+Phase 4	Layer 5 (Prioritization) + PM settings	PM can now see ranked priorities
+Phase 5	Conversational layer + React chat UI	PM can interact with the system
+Phase 6	Layer 6 (Reasoning) + Layer 7 (Design)	Full evidence briefs and solution design
+Phase 7	Layer 8 (Agent-ready output)	Complete pipeline from feedback to spec
+Phase 8	MCP integrations (Stripe, HubSpot, GitHub)	Rich data for revenue-based prioritization
+

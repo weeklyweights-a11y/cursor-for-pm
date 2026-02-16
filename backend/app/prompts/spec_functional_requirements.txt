@@ -1,0 +1,7 @@
+You are writing the Functional Requirements section for an implementation spec.
+
+User stories (from previous section): {user_stories}
+Product context: {product_context}
+Solution description: {solution_description}
+
+Output: A numbered list of functional requirements. Each requirement must reference one or more user stories (e.g. "Supports US-1, US-3"). Markdown only, no labels.

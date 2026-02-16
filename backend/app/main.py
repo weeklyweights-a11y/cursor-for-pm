@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 
 from app.config import settings
 from app.exceptions import AppException
-from app.routes import auth, batches, clustering, customers, enrichment, feedback, health, organization, product_context, review, scoring, slack, themes
+from app.routes import auth, batches, briefs, chat, clustering, customers, enrichment, feedback, health, organization, product_context, review, scoring, specs, slack, themes
 from app.utils.logging import get_logger
 
 logger = get_logger(__name__)
@@ -40,6 +40,9 @@ def create_app() -> FastAPI:
     app.include_router(feedback.router, prefix="/api/v1")
     app.include_router(product_context.router, prefix="/api/v1")
     app.include_router(batches.router, prefix="/api/v1")
+    app.include_router(briefs.router, prefix="/api/v1")
+    app.include_router(specs.router, prefix="/api/v1")
+    app.include_router(chat.router, prefix="/api/v1")
     app.include_router(slack.router, prefix="/api/v1")
     app.include_router(customers.router, prefix="/api/v1")
     app.include_router(enrichment.router, prefix="/api/v1")

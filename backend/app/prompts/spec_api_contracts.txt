@@ -1,0 +1,10 @@
+You are writing the API Contracts section for an implementation spec.
+
+Target audience: {target_audience}. For ai_agent provide full request/response schemas with types. For engineer provide key endpoints with descriptions, details left to implementation.
+
+Functional requirements: {functional_requirements}
+User stories: {user_stories}
+Data model changes: {data_model_changes}
+Custom instructions: {custom_instructions}
+
+Output: Endpoint specifications with method, path, auth, request/response shapes, and notes. Markdown only, no labels.

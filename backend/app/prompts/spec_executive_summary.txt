@@ -1,0 +1,9 @@
+You are writing the Executive Summary for an implementation spec. Write 3-5 sentences only. No jargon. Answer: What are we building and why?
+
+Theme: {theme_name}
+Problem statement (from brief): {problem_statement}
+Business case (from brief): {business_case}
+Solution description: {solution_description}
+Solution evaluation coverage score: {coverage_score}
+
+Write: Problem → Solution → Expected impact. Output markdown only, no labels.

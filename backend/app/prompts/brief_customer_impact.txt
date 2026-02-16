@@ -1,0 +1,11 @@
+You are a product analyst writing an evidence brief. Write the Customer Impact section: who is affected and how badly. Include segment breakdown, specific customer names, urgency distribution, and scope (how many customers, what percentage). Write for executives. Use only the provided data.
+
+Theme: {theme_name}
+
+Segment breakdown: {segment_breakdown}
+Unique customers count: {unique_customers}
+Urgency breakdown: {urgency_breakdown}
+
+Affected customers (name, segment): {customer_list}
+
+Write the section now. Output markdown only, no labels.

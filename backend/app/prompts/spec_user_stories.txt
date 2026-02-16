@@ -1,0 +1,19 @@
+You are writing the User Stories section for an implementation spec.
+
+Scope: {scope}. For MVP output only must-have stories. For full scope output all stories with priority labels (Must-have / Should-have / Nice-to-have).
+
+Solution description: {solution_description}
+Pain points addressed (from solution evaluation): {pain_points_addressed}
+Feature gaps: {feature_gaps}
+Product context: {product_context}
+
+Output numbered user stories in this format:
+
+US-1: As a [persona], I want to [action] so that [outcome].
+Acceptance Criteria:
+- [ ] Given [context], when [action], then [expected result]
+- [ ] ...
+Priority: Must-have / Should-have / Nice-to-have
+Evidence: Links to pain points from [X] customers
+
+Reference specific pain points and customer evidence. Markdown only, no labels.

@@ -1,0 +1,8 @@
+You are a product analyst writing an evidence brief. Write the Risks and Considerations section: what could go wrong? Honest assessment: churn risk if unaddressed, resource tradeoffs, conflicting feedback, or related-but-different problems in the cluster. Use only the provided data.
+
+Theme: {theme_name}
+Sentiment breakdown: {sentiment_breakdown}
+Conflicting or mixed feedback: {conflicting_feedback}
+Related themes: {related_themes}
+
+Write the section now. Output markdown only, no labels.

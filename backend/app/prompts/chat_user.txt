@@ -1,0 +1,3 @@
+{rag_context}
+
+User question: {user_message}

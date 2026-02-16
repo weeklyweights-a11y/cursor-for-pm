@@ -9,6 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.celery_app import celery_app
 from app.database import SessionLocal
+from app.models.feedback_item import FeedbackItem
 from app.services import enrichment_service
 
 logger = logging.getLogger(__name__)

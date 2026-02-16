@@ -96,14 +96,14 @@ export function DashboardPage() {
               {" "}<span className="font-medium text-red-600">{extractionStats.failed}</span> failed
               {" "}out of {extractionStats.total} feedback items.
             </p>
-            {extractionStats.pending > 0 && (
+            {(extractionStats.pending > 0 || extractionStats.failed > 0) && (
               <button
                 type="button"
                 onClick={handleExtractPending}
                 disabled={extracting}
                 className="text-sm text-blue-600 hover:underline disabled:opacity-50"
               >
-                {extracting ? "Queuing…" : "Run extraction for pending"}
+                {extracting ? "Queuing…" : extractionStats.failed > 0 ? "Re-run extraction (pending + failed)" : "Run extraction for pending"}
               </button>
             )}
           </div>

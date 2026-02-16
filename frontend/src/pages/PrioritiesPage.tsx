@@ -89,10 +89,24 @@ export function PrioritiesPage() {
                   <Link to={"/themes/" + theme.id} className="text-lg font-medium text-blue-600 hover:underline">{theme.name}</Link>
                   <p className="text-sm text-gray-600 mt-1">{theme.description || ""}</p>
                 </div>
-                <div className="text-right">
+                <div className="text-right flex flex-col items-end gap-1">
                   <span className="text-sm font-medium text-gray-700">Score: {(theme.priority_score * 100).toFixed(0)}%</span>
                   <div className="w-24 h-2 bg-gray-200 rounded mt-1 overflow-hidden">
                     <div className="h-full bg-blue-600 rounded" style={{ width: Math.min(100, theme.priority_score * 100) + "%" }} />
+                  </div>
+                  <div className="flex gap-2">
+                    <Link
+                      to={`/themes/${theme.id}/brief`}
+                      className="text-sm text-blue-600 hover:underline"
+                    >
+                      Brief
+                    </Link>
+                    <Link
+                      to={`/themes/${theme.id}/spec`}
+                      className="text-sm text-blue-600 hover:underline"
+                    >
+                      Spec
+                    </Link>
                   </div>
                 </div>
               </div>

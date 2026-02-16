@@ -78,6 +78,23 @@ export function ThemeDetailPage() {
         </div>
       )}
 
+      {id && (
+        <div className="mb-6 flex gap-2">
+          <Link
+            to={`/themes/${id}/brief`}
+            className="inline-block rounded bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700"
+          >
+            Evidence Brief
+          </Link>
+          <Link
+            to={`/themes/${id}/spec`}
+            className="inline-block rounded border border-gray-300 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
+          >
+            Implementation Spec
+          </Link>
+        </div>
+      )}
+
       <div>
         <h2 className="text-lg font-medium text-gray-700 mb-2">Feedback in this theme</h2>
         {feedback.length === 0 ? (

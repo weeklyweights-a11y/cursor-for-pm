@@ -15,6 +15,10 @@ import { ReviewQueuePage } from "./pages/ReviewQueuePage";
 import { SettingsPage } from "./pages/SettingsPage";
 import { PrioritiesPage } from "./pages/PrioritiesPage";
 import { ThemeDetailPage } from "./pages/ThemeDetailPage";
+import { BriefPage } from "./pages/BriefPage";
+import { SpecPage } from "./pages/SpecPage";
+import { ThemeBriefPage } from "./pages/ThemeBriefPage";
+import { ThemeSpecPage } from "./pages/ThemeSpecPage";
 
 function App() {
   return (
@@ -34,6 +38,14 @@ function App() {
           </Route>
           <Route path="/themes/:id" element={<PrivateRoute />}>
             <Route index element={<ThemeDetailPage />} />
+            <Route path="brief" element={<ThemeBriefPage />} />
+            <Route path="spec" element={<ThemeSpecPage />} />
+          </Route>
+          <Route path="/briefs/:id" element={<PrivateRoute />}>
+            <Route index element={<BriefPage />} />
+          </Route>
+          <Route path="/specs/:id" element={<PrivateRoute />}>
+            <Route index element={<SpecPage />} />
           </Route>
           <Route path="/feedback" element={<PrivateRoute />}>
             <Route index element={<FeedbackPage />} />

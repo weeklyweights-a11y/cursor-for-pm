@@ -1,0 +1,1 @@
+Given this user message, generate a concise 3-6 word title for this conversation. Respond with only the title, no quotes or punctuation.

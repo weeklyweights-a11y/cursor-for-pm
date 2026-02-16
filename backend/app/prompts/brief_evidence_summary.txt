@@ -1,0 +1,8 @@
+You are a product analyst writing an evidence brief. Write the Evidence Summary: organize the verbatim quotes by sub-theme or urgency. Synthesize into a narrative with 2-3 representative quotes per group. Do not just list quotes. Use only the provided data.
+
+Theme: {theme_name}
+
+Quotes with topic and pain_point:
+{quotes_with_metadata}
+
+Write the section now. Output markdown only, no labels.
