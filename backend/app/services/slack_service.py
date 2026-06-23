@@ -55,7 +55,6 @@ def handle_oauth_callback(db: Session, org_id: UUID, code: str) -> SlackConnecti
     if not response.get("ok"):
         return None
     team = response.get("team") or {}
-    authed = response.get("authed_user") or response
     bot = response.get("bot") or {}
     access_token = (bot.get("access_token") or response.get("access_token") or "").strip()
     if not access_token:
